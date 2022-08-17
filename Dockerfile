@@ -1,7 +1,5 @@
 # AWS CLI
 ARG AWSCLI_VERSION="latest"
-ARG DIR_AWSCLI="/usr/local/aws-cli"
-ARG BIN_AWSCLI="/usr/local/bin/aws"
 
 # K8S
 ARG KUBECTL_VERSION="v1.20.0"
@@ -37,8 +35,6 @@ ARG YQ_VERSION
 ARG K9S_VERSION
 
 ARG KUBECTL_PLUGINS
-ARG DIR_AWSCLI
-ARG BIN_AWSCLI
 ARG BIN_KUBECTL
 ARG BIN_KREW
 ARG BIN_YQ
@@ -103,18 +99,12 @@ ARG YQ_VERSION
 ARG K9S_VERSION
 
 ARG KUBECTL_PLUGINS
-ARG DIR_AWSCLI
-ARG BIN_AWSCLI
 ARG BIN_KUBECTL
 ARG BIN_KREW
 ARG BIN_YQ
 ARG BIN_K9S
 
 WORKDIR /root
-# Install aws
-# COPY --from=build ${DIR_AWSCLI} ${DIR_AWSCLI}
-# COPY --from=build /usr/local/bin/aws /usr/local/bin/aws
-# COPY --from=build /usr/local/bin/aws_completer /usr/local/bin/aws_completer
 # Install kubectl
 COPY --from=build ${BIN_KUBECTL} ${BIN_KUBECTL}
 # Install krew
