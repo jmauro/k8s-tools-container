@@ -1,10 +1,9 @@
 # AWS CLI
-ARG AWSCLI_VERSION="latest"
+ARG AWSIMAGE_VERSION="latest"
 
 # K8S
 ARG KUBECTL_VERSION="v1.20.0"
-ARG BIN_KUBECTL="/usr/local/bin/kubectl"
-ARG BIN_KREW="/usr/local/krew"
+ARG KREW_ROOT="/usr/local/krew"
 # Plugins list:
 # - krew: core plug in manager
 # - ctx: switch between contexts (clusters) (ref: https://github.com/ahmetb/kubectx)
@@ -16,56 +15,64 @@ ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images"
 
 # YQ
 ARG YQ_VERSION="v4.27.2"
-ARG BIN_YQ="/usr/local/bin/yq"
 
 # K9s
 ARG K9S_VERSION="v0.26.3"
-ARG BIN_K9S="/usr/local/bin/k9s"
+
+# Direnv
+ARG bin_path="/usr/local/bin"
 
 #================
 # The build image
 #================
 # Setup the build environment:
-FROM amazon/aws-cli:${AWSCLI_VERSION} AS build
+FROM amazon/aws-cli:${AWSIMAGE_VERSION} AS build
 
 # Global ENV
-ARG AWSCLI_VERSION
 ARG KUBECTL_VERSION
 ARG YQ_VERSION
 ARG K9S_VERSION
 
 ARG KUBECTL_PLUGINS
-ARG BIN_KUBECTL
-ARG BIN_KREW
-ARG BIN_YQ
-ARG BIN_K9S
-
+ARG KREW_ROOT
+ARG bin_path
 
 # ENV for build image
 ENV OS="linux" \
     ARCH="amd64"
-ENV ENV_AWSCLI_VERSION=${AWSCLI_VERSION}
 ENV ENV_KUBECTL_VERSION=${KUBECTL_VERSION}
 ENV ENV_YQ_VERSION=${YQ_VERSION}
 ENV ENV_K9S_VERSION=${K9S_VERSION}
+ENV KREW_ROOT=${KREW_ROOT}
+ENV bin_path=${bin_path}
 
-RUN yum install -y git tar gzip coreutils curl awk golang make
+RUN yum install -y git tar gzip coreutils curl awk golang make wget
 
 # GET ALL BINARIES:
 # -----------------
 WORKDIR /tmp
+RUN mkdir -p /etc/env.d
+# AWSCLI
+RUN ["/bin/bash", "-xc", "set -o pipefail \
+  && VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
+  && printf 'export AWCLI_VERSION=%s' \"${VERSION}\" | tee /etc/env.d/awscli.env" ]
 
 # Install kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
-    mv ./kubectl ${BIN_KUBECTL}
+    mv ./kubectl ${bin_path}/
+RUN ["/bin/bash", "-xc", "set -o pipefail \
+  && VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
+  && printf 'export KUBECTL_VERSION=%s' \"${ENV_KUBECTL_VERSION}\" | tee /etc/env.d/kubectl.env" ]
 
 # Install krew
 RUN set -x \
   && KREW="krew-${OS}_${ARCH}" \
   && curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" \
   && tar zxvf "${KREW}.tar.gz" \
-  && KREW_ROOT=${BIN_KREW} ./"${KREW}" install ${KUBECTL_PLUGINS}
+  && ./"${KREW}" install ${KUBECTL_PLUGINS}
+RUN ["/bin/bash", "-xc", "set -o pipefail \
+  && echo \"export KREW_VERSION=\"$(kubectl krew version | grep GitTag | awk  '{ print $NF}')\"\" | tee /etc/env.d/krew.env" ]
 
 # Install yq
 RUN ["/bin/bash", "-xc", "set -o pipefail \
@@ -76,7 +83,8 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
   && curl -fsSLO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/extract-checksum.sh \
   && bash -x ./extract-checksum.sh SHA-256 ${YQ} | awk '{ print $2 \" \" $1}' | sha256sum -c - \
   && chmod +x ${YQ} \
-  && mv ${YQ} ${BIN_YQ}" ]
+  && mv ${YQ} ${bin_path}/yq" ]
+RUN echo "export YQ_VERSION=${ENV_YQ_VERSION}" | tee /etc/env.d/yq.env
 
 # Install k9s
 RUN ["/bin/bash", "-xc", "set -o pipefail \
@@ -85,44 +93,53 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
   && curl -fsSLO https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/checksums.txt \
   && grep -i ${K9S_TAR} checksums.txt | sha256sum -c - \
   && tar vxfz ${K9S_TAR} \
-  && mv k9s ${BIN_K9S}" ]
+  && mv k9s ${bin_path}/" ]
+RUN echo "export K9S_VERSION=${ENV_K9S_VERSION}" | tee /etc/env.d/k9s.env
+
+# Install direnv
+RUN ["/bin/bash", "-xc", "set -o pipefail \
+  && curl -sfL https://direnv.net/install.sh | bash" ]
+RUN echo "export DIRENV_VERSION=\"$(direnv version)\""
 
 #================
 # The final image
 #================
-FROM amazon/aws-cli:${AWSCLI_VERSION}
+FROM amazon/aws-cli:${AWSIMAGE_VERSION}
 
 # Global ENV
-#ARG AWSCLI_VERSION
 ARG KUBECTL_VERSION
 ARG YQ_VERSION
 ARG K9S_VERSION
 
 ARG KUBECTL_PLUGINS
-ARG BIN_KUBECTL
-ARG BIN_KREW
-ARG BIN_YQ
-ARG BIN_K9S
+ARG KREW_ROOT
+ARG bin_path
+
+# To make sure the KREW_ROOT is set correctly
+ENV KREW_ROOT=${KREW_ROOT}
+ENV PATH=${KREW_ROOT}/bin:${PATH}
+
+COPY --from=build /etc/env.d /etc/env.d
 
 WORKDIR /root
 # Install kubectl
-COPY --from=build ${BIN_KUBECTL} ${BIN_KUBECTL}
+COPY --from=build ${bin_path}/kubectl ${bin_path}/kubectl
 # Install krew
-COPY --from=build ${BIN_KREW} ${BIN_KREW}
+COPY --from=build ${KREW_ROOT} ${KREW_ROOT}
 # Install yq
-COPY --from=build ${BIN_YQ} ${BIN_YQ}
-# INstall k9s
-COPY --from=build ${BIN_K9S} ${BIN_K9S}
+COPY --from=build ${bin_path}/yq ${bin_path}/yq
+# Install k9s
+COPY --from=build ${bin_path}/k9s ${bin_path}/k9s
+# Install direnv
+COPY --from=build ${bin_path}/direnv ${bin_path}/direnv
 
 COPY scripts/yum_install.sh /usr/bin/yum_install
 RUN chmod +x /usr/bin/yum_install
 
-RUN yum_install bash-completion tmux jq file
+RUN yum_install bash-completion tmux jq file git tar gzip wget curl
+RUN curl https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh -o /etc/profile.d/kube-ps1.sh
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY bashrc /root/.bashrc
 
-RUN chmod +x /docker-entrypoint.sh
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["aws"]
+# Could use systemd + exec
+ENTRYPOINT ["/bin/bash", "-c", "/bin/bash -l"]
