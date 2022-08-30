@@ -19,6 +19,9 @@ ARG YQ_VERSION="v4.27.2"
 # K9s
 ARG K9S_VERSION="v0.26.3"
 
+# FZF
+ARG FZF_VERSION="0.33.0"
+
 # Direnv
 ARG bin_path="/usr/local/bin"
 
@@ -32,6 +35,7 @@ FROM amazon/aws-cli:${AWSIMAGE_VERSION} AS build
 ARG KUBECTL_VERSION
 ARG YQ_VERSION
 ARG K9S_VERSION
+ARG FZF_VERSION
 
 ARG KUBECTL_PLUGINS
 ARG KREW_ROOT
@@ -43,6 +47,7 @@ ENV OS="linux" \
 ENV ENV_KUBECTL_VERSION=${KUBECTL_VERSION}
 ENV ENV_YQ_VERSION=${YQ_VERSION}
 ENV ENV_K9S_VERSION=${K9S_VERSION}
+ENV ENV_FZF_VERSION=${FZF_VERSION}
 ENV KREW_ROOT=${KREW_ROOT}
 ENV bin_path=${bin_path}
 
@@ -96,6 +101,16 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
   && mv k9s ${bin_path}/" ]
 RUN echo "export K9S_VERSION=${ENV_K9S_VERSION}" | tee /etc/env.d/k9s.env
 
+# Install fzf
+RUN ["/bin/bash", "-xc", "set -o pipefail \
+  && FZF=fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz \
+  && curl -fsSLO https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF} \
+  && curl -fsSLO https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf_${FZF_VERSION}_checksums.txt \
+  && grep -i ${FZF} fzf_${FZF_VERSION}_checksums.txt | sha256sum -c - \
+  && tar vxfz ${FZF} \
+  && mv fzf ${bin_path}" ]
+RUN echo "export FZF_VERSION=${ENV_FZF_VERSION}" | tee /etc/env.d/fzf.env
+
 # Install direnv
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && curl -sfL https://direnv.net/install.sh | bash" ]
@@ -132,6 +147,8 @@ COPY --from=build ${bin_path}/yq ${bin_path}/yq
 COPY --from=build ${bin_path}/k9s ${bin_path}/k9s
 # Install direnv
 COPY --from=build ${bin_path}/direnv ${bin_path}/direnv
+# Install fzf
+COPY --from=build ${bin_path}/fzf ${bin_path}/fzf
 
 COPY scripts/yum_install.sh /usr/bin/yum_install
 RUN chmod +x /usr/bin/yum_install
