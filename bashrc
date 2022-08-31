@@ -114,5 +114,5 @@ if ! shopt -oq posix; then
 fi
 
 export KUBE_PS1_SYMBOL_ENABLE=false
-export PS1='[\u@\h \W $(kube_ps1)]\$ '
+export PS1='[\u@\h $(kube_ps1)] \w \$ '
 export EDITOR=vi

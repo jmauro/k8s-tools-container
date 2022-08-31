@@ -79,6 +79,12 @@ RUN set -x \
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && echo \"export KREW_VERSION=\"$(kubectl krew version | grep GitTag | awk  '{ print $NF}')\"\" | tee /etc/env.d/krew.env" ]
 
+# WORKAROUND: doctor plugin not to the latest version in the store
+# Ref: https://github.com/emirozer/kubectl-doctor/issues/22
+RUN curl -fsSLO -o "kubectl-doctor" "https://github.com/emirozer/kubectl-doctor/releases/download/0.3.1/kubectl-doctor_linux_amd64" \
+  && chmod +x kubectl-doctor \
+  && mv kubectl-doctor /usr/local/krew/store/doctor/v0.3.0/
+
 # Install yq
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && YQ=yq_${OS}_${ARCH} \
