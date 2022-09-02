@@ -25,6 +25,9 @@ ARG FZF_VERSION="0.33.0"
 # Direnv
 ARG bin_path="/usr/local/bin"
 
+# Helm
+ARG HELM_VERSION="v3.9.4"
+
 #================
 # The build image
 #================
@@ -44,10 +47,6 @@ ARG bin_path
 # ENV for build image
 ENV OS="linux" \
     ARCH="amd64"
-ENV ENV_KUBECTL_VERSION=${KUBECTL_VERSION}
-ENV ENV_YQ_VERSION=${YQ_VERSION}
-ENV ENV_K9S_VERSION=${K9S_VERSION}
-ENV ENV_FZF_VERSION=${FZF_VERSION}
 ENV KREW_ROOT=${KREW_ROOT}
 ENV bin_path=${bin_path}
 
@@ -68,7 +67,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL
     mv ./kubectl ${bin_path}/
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
-  && printf 'export KUBECTL_VERSION=%s' \"${ENV_KUBECTL_VERSION}\" | tee /etc/env.d/kubectl.env" ]
+  && printf 'export KUBECTL_VERSION=%s' \"${KUBECTL_VERSION}\" | tee /etc/env.d/kubectl.env" ]
 
 # Install krew
 RUN set -x \
@@ -95,7 +94,7 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
   && bash -x ./extract-checksum.sh SHA-256 ${YQ} | awk '{ print $2 \" \" $1}' | sha256sum -c - \
   && chmod +x ${YQ} \
   && mv ${YQ} ${bin_path}/yq" ]
-RUN echo "export YQ_VERSION=${ENV_YQ_VERSION}" | tee /etc/env.d/yq.env
+RUN echo "export YQ_VERSION=${YQ_VERSION}" | tee /etc/env.d/yq.env
 
 # Install k9s
 RUN ["/bin/bash", "-xc", "set -o pipefail \
@@ -105,7 +104,7 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
   && grep -i ${K9S_TAR} checksums.txt | sha256sum -c - \
   && tar vxfz ${K9S_TAR} \
   && mv k9s ${bin_path}/" ]
-RUN echo "export K9S_VERSION=${ENV_K9S_VERSION}" | tee /etc/env.d/k9s.env
+RUN echo "export K9S_VERSION=${K9S_VERSION}" | tee /etc/env.d/k9s.env
 
 # Install fzf
 RUN ["/bin/bash", "-xc", "set -o pipefail \
@@ -115,12 +114,22 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
   && grep -i ${FZF} fzf_${FZF_VERSION}_checksums.txt | sha256sum -c - \
   && tar vxfz ${FZF} \
   && mv fzf ${bin_path}" ]
-RUN echo "export FZF_VERSION=${ENV_FZF_VERSION}" | tee /etc/env.d/fzf.env
+RUN echo "export FZF_VERSION=${FZF_VERSION}" | tee /etc/env.d/fzf.env
+
+# install Helm
+RUN ["/bin/bash", "-xc", "set -o pipefail \
+  && HELM=helm-${HELM_VERSION}-linux-amd64 \
+  && curl -fsSLO https://get.helm.sh/${HELM}.tar.gz \
+  && curl -fsSLO https://get.helm.sh/${HELM}.tar.gz.sha256sum \
+  && grep -i ${HELM} ${HELM}.tar.gz.sha256sum | sha256sum -c - \
+  && tar vxfz ${HELM}.tar.gz \
+  && mv linux-amd64/helm ${bin_path}/helm" ]
+RUN echo "export HELM_VERSION=\"${HELM_VERSION}\"" | tee /etc/env.d/helm.env
 
 # Install direnv
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && curl -sfL https://direnv.net/install.sh | bash" ]
-RUN echo "export DIRENV_VERSION=\"$(direnv version)\""
+RUN echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
 
 #================
 # The final image
