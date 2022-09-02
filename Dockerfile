@@ -172,6 +172,7 @@ RUN chmod +x /usr/bin/yum_install
 
 RUN yum_install bash-completion tmux jq file git tar gzip wget curl
 RUN curl https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh -o /etc/profile.d/kube-ps1.sh
+RUN ${bin_path}/kubectl completion bash | tee /etc/profile.d/kubectl.sh
 
 COPY bashrc /root/.bashrc
 
