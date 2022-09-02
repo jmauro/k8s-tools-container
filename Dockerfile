@@ -49,6 +49,7 @@ ARG bin_path
 ENV OS="linux" \
     ARCH="amd64"
 ENV KREW_ROOT=${KREW_ROOT}
+ENV PATH=${KREW_ROOT}/bin:${PATH}
 ENV bin_path=${bin_path}
 
 RUN yum install -y git tar gzip coreutils curl awk golang make wget
@@ -60,7 +61,7 @@ RUN mkdir -p /etc/env.d
 # AWSCLI
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
-  && printf 'export AWCLI_VERSION=%s' \"${VERSION}\" | tee /etc/env.d/awscli.env" ]
+  && printf 'export AWCLI_VERSION=%s\n' \"${VERSION}\" | tee /etc/env.d/awscli.env" ]
 
 # Install kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
