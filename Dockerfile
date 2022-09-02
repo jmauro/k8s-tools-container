@@ -39,6 +39,7 @@ ARG KUBECTL_VERSION
 ARG YQ_VERSION
 ARG K9S_VERSION
 ARG FZF_VERSION
+ARG HELM_VERSION
 
 ARG KUBECTL_PLUGINS
 ARG KREW_ROOT
@@ -72,7 +73,7 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
 # Install krew
 RUN set -x \
   && KREW="krew-${OS}_${ARCH}" \
-  && curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" \
   && tar zxvf "${KREW}.tar.gz" \
   && ./"${KREW}" install ${KUBECTL_PLUGINS}
 RUN ["/bin/bash", "-xc", "set -o pipefail \
@@ -80,17 +81,18 @@ RUN ["/bin/bash", "-xc", "set -o pipefail \
 
 # WORKAROUND: doctor plugin not to the latest version in the store
 # Ref: https://github.com/emirozer/kubectl-doctor/issues/22
-RUN curl -fsSLO -o "kubectl-doctor" "https://github.com/emirozer/kubectl-doctor/releases/download/0.3.1/kubectl-doctor_linux_amd64" \
-  && chmod +x kubectl-doctor \
-  && mv kubectl-doctor /usr/local/krew/store/doctor/v0.3.0/
+RUN DOCTOR=kubectl-doctor_${OS}_${ARCH} \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/emirozer/kubectl-doctor/releases/download/0.3.1/${DOCTOR}" \
+  && chmod +x ${DOCTOR} \
+  && mv ${DOCTOR} /usr/local/krew/store/doctor/v0.3.0/kubectl-doctor
 
 # Install yq
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && YQ=yq_${OS}_${ARCH} \
-  && curl -fsSLO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ} \
-  && curl -fsSLO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums_hashes_order \
-  && curl -fsSLO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums \
-  && curl -fsSLO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/extract-checksum.sh \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ} \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums_hashes_order \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/extract-checksum.sh \
   && bash -x ./extract-checksum.sh SHA-256 ${YQ} | awk '{ print $2 \" \" $1}' | sha256sum -c - \
   && chmod +x ${YQ} \
   && mv ${YQ} ${bin_path}/yq" ]
@@ -99,8 +101,8 @@ RUN echo "export YQ_VERSION=${YQ_VERSION}" | tee /etc/env.d/yq.env
 # Install k9s
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && K9S_TAR=k9s_Linux_x86_64.tar.gz \
-  && curl -fsSLO https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz \
-  && curl -fsSLO https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/checksums.txt \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/checksums.txt \
   && grep -i ${K9S_TAR} checksums.txt | sha256sum -c - \
   && tar vxfz ${K9S_TAR} \
   && mv k9s ${bin_path}/" ]
@@ -109,8 +111,8 @@ RUN echo "export K9S_VERSION=${K9S_VERSION}" | tee /etc/env.d/k9s.env
 # Install fzf
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && FZF=fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz \
-  && curl -fsSLO https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF} \
-  && curl -fsSLO https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf_${FZF_VERSION}_checksums.txt \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF} \
+  && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf_${FZF_VERSION}_checksums.txt \
   && grep -i ${FZF} fzf_${FZF_VERSION}_checksums.txt | sha256sum -c - \
   && tar vxfz ${FZF} \
   && mv fzf ${bin_path}" ]
@@ -118,9 +120,9 @@ RUN echo "export FZF_VERSION=${FZF_VERSION}" | tee /etc/env.d/fzf.env
 
 # install Helm
 RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && HELM=helm-${HELM_VERSION}-linux-amd64 \
-  && curl -fsSLO https://get.helm.sh/${HELM}.tar.gz \
-  && curl -fsSLO https://get.helm.sh/${HELM}.tar.gz.sha256sum \
+  && HELM=helm-${HELM_VERSION}-${OS}-${ARCH} \
+  && curl --fail --silent --show-error --location --remote-name https://get.helm.sh/${HELM}.tar.gz \
+  && curl --fail --silent --show-error --location --remote-name https://get.helm.sh/${HELM}.tar.gz.sha256sum \
   && grep -i ${HELM} ${HELM}.tar.gz.sha256sum | sha256sum -c - \
   && tar vxfz ${HELM}.tar.gz \
   && mv linux-amd64/helm ${bin_path}/helm" ]
@@ -128,7 +130,7 @@ RUN echo "export HELM_VERSION=\"${HELM_VERSION}\"" | tee /etc/env.d/helm.env
 
 # Install direnv
 RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && curl -sfL https://direnv.net/install.sh | bash" ]
+  && curl --fail --silent --location https://direnv.net/install.sh | bash" ]
 RUN echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
 
 #================
