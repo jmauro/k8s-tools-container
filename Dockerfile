@@ -166,6 +166,8 @@ COPY --from=build ${bin_path}/k9s ${bin_path}/k9s
 COPY --from=build ${bin_path}/direnv ${bin_path}/direnv
 # Install fzf
 COPY --from=build ${bin_path}/fzf ${bin_path}/fzf
+# Install helm
+COPY --from=build ${bin_path}/helm ${bin_path}/helm
 
 COPY scripts/yum_install.sh /usr/bin/yum_install
 RUN chmod +x /usr/bin/yum_install
