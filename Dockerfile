@@ -69,7 +69,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL
     mv ./kubectl ${bin_path}/
 RUN ["/bin/bash", "-xc", "set -o pipefail \
   && VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
-  && printf 'export KUBECTL_VERSION=%s' \"${KUBECTL_VERSION}\" | tee /etc/env.d/kubectl.env" ]
+  && printf 'export KUBECTL_VERSION=%s\n' \"${KUBECTL_VERSION}\" | tee /etc/env.d/kubectl.env" ]
 
 # Install krew
 RUN set -x \
@@ -173,11 +173,17 @@ COPY --from=build ${bin_path}/helm ${bin_path}/helm
 COPY scripts/yum_install.sh /usr/bin/yum_install
 RUN chmod +x /usr/bin/yum_install
 
-RUN yum_install bash-completion tmux jq file git tar gzip wget curl
+RUN yum_install bash-completion tmux jq file git tar gzip wget curl vim
 RUN curl https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh -o /etc/profile.d/kube-ps1.sh
 RUN ${bin_path}/kubectl completion bash | tee /etc/profile.d/kubectl.sh
 
+# -- [ Final Env
+ENV KUBE_PS1_SYMBOL_ENABLE=false
+ENV PS1='[\u@\h $(kube_ps1)] \w \$ '
+ENV EDITOR=vim
+
+# --[ dotfiles
 COPY bashrc /root/.bashrc
 
 # Could use systemd + exec
-ENTRYPOINT ["/bin/bash", "-c", "/bin/bash -l"]
+ENTRYPOINT ["/bin/bash"]

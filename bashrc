@@ -115,4 +115,4 @@ fi
 
 export KUBE_PS1_SYMBOL_ENABLE=false
 export PS1='[\u@\h $(kube_ps1)] \w \$ '
-export EDITOR=vi
+export EDITOR=vim
