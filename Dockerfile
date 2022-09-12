@@ -52,33 +52,33 @@ ENV KREW_ROOT=${KREW_ROOT}
 ENV PATH=${KREW_ROOT}/bin:${PATH}
 ENV bin_path=${bin_path}
 
+# Build container so don't need to clean it
+# hadolint ignore=DL3032,DL3033
 RUN yum install -y git tar gzip coreutils curl awk golang make wget
 
 # GET ALL BINARIES:
 # -----------------
 WORKDIR /tmp
 RUN mkdir -p /etc/env.d
+SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
+
 # AWSCLI
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
-  && printf 'export AWCLI_VERSION=%s\n' \"${VERSION}\" | tee /etc/env.d/awscli.env" ]
+RUN  VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
+  && printf 'export AWCLI_VERSION=%s\n' "${VERSION}" | tee /etc/env.d/awscli.env
 
 # Install kubectl
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
-    chmod +x ./kubectl && \
-    mv ./kubectl ${bin_path}/
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
-  && printf 'export KUBECTL_VERSION=%s\n' \"${KUBECTL_VERSION}\" | tee /etc/env.d/kubectl.env" ]
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
+  && chmod +x ./kubectl \
+  && mv ./kubectl ${bin_path}/ \
+  && printf 'export KUBECTL_VERSION=%s\n' "${KUBECTL_VERSION}" | tee /etc/env.d/kubectl.env
 
 # Install krew
 RUN set -x \
   && KREW="krew-${OS}_${ARCH}" \
   && curl --fail --silent --show-error --location --remote-name "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" \
   && tar zxvf "${KREW}.tar.gz" \
-  && ./"${KREW}" install ${KUBECTL_PLUGINS}
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && echo \"export KREW_VERSION=\"$(kubectl krew version | grep GitTag | awk  '{ print $NF}')\"\" | tee /etc/env.d/krew.env" ]
+  && ./"${KREW}" install ${KUBECTL_PLUGINS} \
+  && echo "export KREW_VERSION=\"$(kubectl krew version | grep GitTag | awk  '{ print $NF}')\"" | tee /etc/env.d/krew.env
 
 # WORKAROUND: doctor plugin not to the latest version in the store
 # Ref: https://github.com/emirozer/kubectl-doctor/issues/22
@@ -88,51 +88,46 @@ RUN DOCTOR=kubectl-doctor_${OS}_${ARCH} \
   && mv ${DOCTOR} /usr/local/krew/store/doctor/v0.3.0/kubectl-doctor
 
 # Install yq
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && YQ=yq_${OS}_${ARCH} \
+RUN YQ=yq_${OS}_${ARCH} \
   && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ} \
   && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums_hashes_order \
   && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums \
   && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/extract-checksum.sh \
-  && bash -x ./extract-checksum.sh SHA-256 ${YQ} | awk '{ print $2 \" \" $1}' | sha256sum -c - \
+  && bash -x ./extract-checksum.sh SHA-256 ${YQ} | awk '{ print $2 " " $1}' | sha256sum -c - \
   && chmod +x ${YQ} \
-  && mv ${YQ} ${bin_path}/yq" ]
-RUN echo "export YQ_VERSION=${YQ_VERSION}" | tee /etc/env.d/yq.env
+  && mv ${YQ} ${bin_path}/yq \
+  && echo "export YQ_VERSION=${YQ_VERSION}" | tee /etc/env.d/yq.env
 
 # Install k9s
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && K9S_TAR=k9s_Linux_x86_64.tar.gz \
+RUN K9S_TAR=k9s_Linux_x86_64.tar.gz \
   && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz \
   && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/checksums.txt \
   && grep -i ${K9S_TAR} checksums.txt | sha256sum -c - \
   && tar vxfz ${K9S_TAR} \
-  && mv k9s ${bin_path}/" ]
-RUN echo "export K9S_VERSION=${K9S_VERSION}" | tee /etc/env.d/k9s.env
+  && mv k9s ${bin_path}/ \
+  && echo "export K9S_VERSION=${K9S_VERSION}" | tee /etc/env.d/k9s.env
 
 # Install fzf
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && FZF=fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz \
+RUN FZF=fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz \
   && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF} \
   && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf_${FZF_VERSION}_checksums.txt \
   && grep -i ${FZF} fzf_${FZF_VERSION}_checksums.txt | sha256sum -c - \
   && tar vxfz ${FZF} \
-  && mv fzf ${bin_path}" ]
-RUN echo "export FZF_VERSION=${FZF_VERSION}" | tee /etc/env.d/fzf.env
+  && mv fzf ${bin_path} \
+  && echo "export FZF_VERSION=${FZF_VERSION}" | tee /etc/env.d/fzf.env
 
 # install Helm
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && HELM=helm-${HELM_VERSION}-${OS}-${ARCH} \
+RUN HELM=helm-${HELM_VERSION}-${OS}-${ARCH} \
   && curl --fail --silent --show-error --location --remote-name https://get.helm.sh/${HELM}.tar.gz \
   && curl --fail --silent --show-error --location --remote-name https://get.helm.sh/${HELM}.tar.gz.sha256sum \
   && grep -i ${HELM} ${HELM}.tar.gz.sha256sum | sha256sum -c - \
   && tar vxfz ${HELM}.tar.gz \
-  && mv linux-amd64/helm ${bin_path}/helm" ]
-RUN echo "export HELM_VERSION=\"${HELM_VERSION}\"" | tee /etc/env.d/helm.env
+  && mv linux-amd64/helm ${bin_path}/helm \
+  && echo "export HELM_VERSION=\"${HELM_VERSION}\"" | tee /etc/env.d/helm.env
 
 # Install direnv
-RUN ["/bin/bash", "-xc", "set -o pipefail \
-  && curl --fail --silent --location https://direnv.net/install.sh | bash" ]
-RUN echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
+RUN curl --fail --silent --location https://direnv.net/install.sh | bash \
+  && echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
 
 #================
 # The final image
@@ -173,9 +168,10 @@ COPY --from=build ${bin_path}/helm ${bin_path}/helm
 COPY scripts/yum_install.sh /usr/bin/yum_install
 RUN chmod +x /usr/bin/yum_install
 
-RUN yum_install bash-completion tmux jq file git tar gzip wget curl vim
-RUN curl https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh -o /etc/profile.d/kube-ps1.sh
-RUN ${bin_path}/kubectl completion bash | tee /etc/profile.d/kubectl.sh
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN yum_install bash-completion tmux jq file git tar gzip wget curl vim \
+  && curl https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh -o /etc/profile.d/kube-ps1.sh \
+  && ${bin_path}/kubectl completion bash | tee /etc/profile.d/kubectl.sh
 
 # -- [ Final Env
 ENV KUBE_PS1_SYMBOL_ENABLE=false
