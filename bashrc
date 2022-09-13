@@ -1,4 +1,17 @@
+# --[ From RedHat
+# .bashrc
 
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+          . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+# --[ From Debian
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -113,6 +126,13 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# --[ User defined
+# Environment
 export KUBE_PS1_SYMBOL_ENABLE=false
 export PS1='[\u@\h $(kube_ps1)] \w \$ '
 export EDITOR=vim
+# Aliases
+alias k=kubectl
+
+# Same behavior as executing `bash -l`
+. /etc/profile
