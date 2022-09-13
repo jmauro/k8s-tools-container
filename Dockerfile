@@ -28,6 +28,9 @@ ARG bin_path="/usr/local/bin"
 # Helm
 ARG HELM_VERSION="v3.9.4"
 
+# Velero
+ARG VELERO_VERSION="v1.9.1"
+
 #================
 # The build image
 #================
@@ -40,6 +43,7 @@ ARG YQ_VERSION
 ARG K9S_VERSION
 ARG FZF_VERSION
 ARG HELM_VERSION
+ARG VELERO_VERSION
 
 ARG KUBECTL_PLUGINS
 ARG KREW_ROOT
@@ -82,13 +86,13 @@ RUN set -x \
 
 # WORKAROUND: doctor plugin not to the latest version in the store
 # Ref: https://github.com/emirozer/kubectl-doctor/issues/22
-RUN DOCTOR=kubectl-doctor_${OS}_${ARCH} \
+RUN DOCTOR="kubectl-doctor_${OS}_${ARCH}" \
   && curl --fail --silent --show-error --location --remote-name "https://github.com/emirozer/kubectl-doctor/releases/download/0.3.1/${DOCTOR}" \
   && chmod +x ${DOCTOR} \
   && mv ${DOCTOR} /usr/local/krew/store/doctor/v0.3.0/kubectl-doctor
 
 # Install yq
-RUN YQ=yq_${OS}_${ARCH} \
+RUN YQ="yq_${OS}_${ARCH}" \
   && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ} \
   && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums_hashes_order \
   && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums \
@@ -99,7 +103,7 @@ RUN YQ=yq_${OS}_${ARCH} \
   && echo "export YQ_VERSION=${YQ_VERSION}" | tee /etc/env.d/yq.env
 
 # Install k9s
-RUN K9S_TAR=k9s_Linux_x86_64.tar.gz \
+RUN K9S_TAR="k9s_Linux_x86_64.tar.gz" \
   && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz \
   && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/checksums.txt \
   && grep -i ${K9S_TAR} checksums.txt | sha256sum -c - \
@@ -108,7 +112,7 @@ RUN K9S_TAR=k9s_Linux_x86_64.tar.gz \
   && echo "export K9S_VERSION=${K9S_VERSION}" | tee /etc/env.d/k9s.env
 
 # Install fzf
-RUN FZF=fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz \
+RUN FZF="fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz" \
   && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF} \
   && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf_${FZF_VERSION}_checksums.txt \
   && grep -i ${FZF} fzf_${FZF_VERSION}_checksums.txt | sha256sum -c - \
@@ -117,13 +121,22 @@ RUN FZF=fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz \
   && echo "export FZF_VERSION=${FZF_VERSION}" | tee /etc/env.d/fzf.env
 
 # install Helm
-RUN HELM=helm-${HELM_VERSION}-${OS}-${ARCH} \
-  && curl --fail --silent --show-error --location --remote-name https://get.helm.sh/${HELM}.tar.gz \
-  && curl --fail --silent --show-error --location --remote-name https://get.helm.sh/${HELM}.tar.gz.sha256sum \
-  && grep -i ${HELM} ${HELM}.tar.gz.sha256sum | sha256sum -c - \
-  && tar vxfz ${HELM}.tar.gz \
-  && mv linux-amd64/helm ${bin_path}/helm \
+RUN HELM="helm-${HELM_VERSION}-${OS}-${ARCH}" \
+  && curl --fail --silent --show-error --location --remote-name "https://get.helm.sh/${HELM}.tar.gz" \
+  && curl --fail --silent --show-error --location --remote-name "https://get.helm.sh/${HELM}.tar.gz.sha256sum" \
+  && grep -i "${HELM}" ${HELM}.tar.gz.sha256sum | sha256sum -c - \
+  && tar vxfz "${HELM}.tar.gz" \
+  && mv "linux-amd64/helm" "${bin_path}/helm" \
   && echo "export HELM_VERSION=\"${HELM_VERSION}\"" | tee /etc/env.d/helm.env
+
+# install velero
+RUN VELERO="velero-${VELERO_VERSION}-${OS}-${ARCH}" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/${VELERO}.tar.gz" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/CHECKSUM" \
+  && grep -i "${VELERO}" CHECKSUM | sha256sum -c - \
+  && tar vxfz "${VELERO}.tar.gz" \
+  && mv "${VELERO}/velero" "${bin_path}/velero" \
+  && echo "export VELERO_VERSION=\"${VELERO_VERSION}\"" | tee /etc/env.d/velero.env
 
 # Install direnv
 RUN curl --fail --silent --location https://direnv.net/install.sh | bash \
@@ -164,6 +177,8 @@ COPY --from=build ${bin_path}/direnv ${bin_path}/direnv
 COPY --from=build ${bin_path}/fzf ${bin_path}/fzf
 # Install helm
 COPY --from=build ${bin_path}/helm ${bin_path}/helm
+# Install velero
+COPY --from=build ${bin_path}/velero ${bin_path}/velero
 
 COPY scripts/yum_install.sh /usr/bin/yum_install
 RUN chmod +x /usr/bin/yum_install
