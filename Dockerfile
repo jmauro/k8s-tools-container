@@ -185,8 +185,9 @@ RUN chmod +x /usr/bin/yum_install
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN yum_install bash-completion tmux jq file git tar gzip wget curl vim \
-  && curl https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh -o /etc/profile.d/kube-ps1.sh \
-  && ${bin_path}/kubectl completion bash | tee /etc/profile.d/kubectl.sh
+  && curl -o "/etc/profile.d/kube-ps1.sh"  "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" \
+  && ${bin_path}/kubectl completion bash > /etc/profile.d/kubectl.sh \
+  && curl -o "/etc/profile.d/fzf.sh" "https://github.com/junegunn/fzf/blob/master/shell/completion.bash"
 
 # -- [ Final Env
 ENV KUBE_PS1_SYMBOL_ENABLE=false
