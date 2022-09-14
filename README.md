@@ -31,5 +31,5 @@ Use your favorite docker image builder (in the example `buildah`)
 ## How to use it
 Just use your favorite container orchestrator (in the example `podman`)
 ```
-podman run --rm --name kubectl$(basename $(tty)) --tty=true --interactive --volume ~/.aws:/root/.aws --volume ~/.kube:/root/.kube docker.io/localregistry:20220913
+podman run --rm --name kubectl$(basename $(tty)) --tty=true --interactive --volume ~/.aws:/root/.aws --volume ~/.kube:/root/.kube docker.io/localregistry/kubectl-container:20220913
 ```
