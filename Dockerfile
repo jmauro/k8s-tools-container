@@ -2,7 +2,7 @@
 ARG AWSIMAGE_VERSION="latest"
 
 # K8S
-ARG KUBECTL_VERSION="v1.20.0"
+ARG KUBECTL_VERSION="v1.22.0"
 ARG KREW_ROOT="/usr/local/krew"
 # Plugins list:
 # - krew: core plug in manager
@@ -17,7 +17,7 @@ ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images"
 ARG YQ_VERSION="v4.27.2"
 
 # K9s
-ARG K9S_VERSION="v0.26.3"
+ARG K9S_VERSION="v0.26.6"
 
 # FZF
 ARG FZF_VERSION="0.33.0"
