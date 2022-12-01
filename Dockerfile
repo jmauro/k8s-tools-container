@@ -14,22 +14,22 @@ ARG KREW_ROOT="/usr/local/krew"
 ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images"
 
 # YQ
-ARG YQ_VERSION="v4.27.2"
+ARG YQ_VERSION="v4.30.5"
 
 # K9s
-ARG K9S_VERSION="v0.26.6"
+ARG K9S_VERSION="v0.26.7"
 
 # FZF
-ARG FZF_VERSION="0.33.0"
+ARG FZF_VERSION="0.35.1"
 
 # Direnv
 ARG bin_path="/usr/local/bin"
 
 # Helm
-ARG HELM_VERSION="v3.9.4"
+ARG HELM_VERSION="v3.10.2"
 
 # Velero
-ARG VELERO_VERSION="v1.9.1"
+ARG VELERO_VERSION="v1.9.4"
 
 #================
 # The build image
