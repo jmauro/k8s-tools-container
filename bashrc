@@ -3,7 +3,8 @@
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
-          . /etc/bashrc
+  # shellcheck source=/dev/null
+  . /etc/bashrc
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
@@ -88,7 +89,11 @@ esac
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    if test -r ~/.dircolors; then
+      eval "$(dircolors -b ~/.dircolors)"
+    else
+      eval "$(dircolors -b)"
+    fi
     alias ls='ls --color=auto'
     alias dir='dir --color=auto'
     alias vdir='vdir --color=auto'
@@ -112,7 +117,8 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+  # shellcheck source=/dev/null
+  . "${HOME}/bash_aliases"
 fi
 
 # enable programmable completion features (you don't need to enable
@@ -120,13 +126,20 @@ fi
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
+    # shellcheck source=/dev/null
+    . "/usr/share/bash-completion/bash_completion"
   elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
+    # shellcheck source=/dev/null
+    . "/etc/bash_completion"
   fi
 fi
 
 # --[ User defined
+# Hishtory Config:
+export PATH="/root/.hishtory:${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/aquaproj-aqua}/bin:${KREW_ROOT}/bin:${PATH}"
+# shellcheck source=/dev/null
+source /root/.hishtory/config.sh
+
 # Environment
 export KUBE_PS1_SYMBOL_ENABLE=false
 export PS1='[\u@\h $(kube_ps1)] \w \$ '
@@ -134,5 +147,16 @@ export EDITOR=vim
 # Aliases
 alias k=kubectl
 
-# Same behavior as executing `bash -l`
-. /etc/profile
+# Make sure to create independant images
+if [ -d ~/.kube.config ]; then
+  cp -r ~/.kube.config ~/.kube
+fi
+
+# Loading env
+if [ -d /etc/env.d ]; then
+  for file in /etc/env.d/*.env
+  do
+    # shellcheck source=/dev/null
+    . "${file}"
+  done
+fi

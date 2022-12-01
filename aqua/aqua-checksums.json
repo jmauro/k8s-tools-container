@@ -1,0 +1,58 @@
+{
+  "checksums": [
+    {
+      "id": "github_release/github.com/derailed/k9s/v0.32.5/k9s_Linux_amd64.tar.gz",
+      "checksum": "33C31BF5FEBA292B59B8DABE5547CB52AB565521EE5619B52EB4BD4BF226CEA3",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/eksctl-io/eksctl/v0.183.0/eksctl_Linux_amd64.tar.gz",
+      "checksum": "B0D654115A40CE29AD5D0265D24D5BB046E34632563F37554F267C7457B5A4F4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/junegunn/fzf/0.53.0/fzf-0.53.0-linux_amd64.tar.gz",
+      "checksum": "AF2663C3309967DC191D21537E53C2E9F8A37F490A32456B9498A006F05E3796",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kubernetes-sigs/krew/v0.4.4/krew-linux_amd64.tar.gz",
+      "checksum": "E471396B0ED4F2BE092B4854CC030DFCBB12B86197972E7BEF0CB89AD9C72477",
+      "algorithm": "sha256"
+    },
+    {                                                                                                                                                                                                                                                                                                                             "id": "github_release/github.com/mikefarah/yq/v4.44.2/yq_linux_amd64",
+      "checksum": "246B781828353A59FB04FFAADA241F78A8F3F25C623047B40306DEF1F6806E71",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vmware-tanzu/velero/v1.14.0/velero-v1.14.0-linux-amd64.tar.gz",
+      "checksum": "9B066714CDB874FE34EC123645385D6F8C40C43308BBEDF11D3265A7AF17FDA6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.17.0.zip",
+      "checksum": "229BDC40A4B072C99570E2D07CBC1E1BD6EA67CA10F018B54271189A61F9B067",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/dl.k8s.io/v1.30.2/bin/linux/amd64/kubectl",
+      "checksum": "C6E9C45CE3F82C90663E3C30DB3B27C167E8B19D83ED4048B61C1013F6A7C66E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz",
+      "checksum": "2694B91C3E501CFF57CAF650E639604A274645F61AF2EA4D601677B746B44FE2",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/vault/1.17.0/vault_1.17.0_linux_amd64.zip",
+      "checksum": "79263A65E3F98B42CE9FE6A955231466435D84FBD56E3FEA393418985156FE7D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.196.0/registry.yaml",
+      "checksum": "8D720E70A301A8B0AC15111B3466119590328F8FBBB817EADFD51D8D22BF1BDE40D8EDA82C5EEAF0D3A40F5248BC7F72151C73858E2DE1B46F05C49EC66520AF",
+      "algorithm": "sha512"
+    }
+  ]
+}

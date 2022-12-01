@@ -1,0 +1,207 @@
+# --[ Global variables
+ARG OPENSSL_VERSION=3.3.1
+ARG SSL_PREFIX="/usr/local/ssl-${OPENSSL_VERSION}"
+ARG DEFAULT_BASE="debian:testing-slim"
+
+ARG KREW_ROOT="/usr/local/krew"
+# Plugins list:
+# - krew: core plug in manager
+# - ctx: switch between contexts (clusters) (ref: https://github.com/ahmetb/kubectx)
+# - ns: switch between Kubernetes namespaces (ref: https://github.com/ahmetb/kubectx)
+# - doctor: scan your k8s cluster to see if there are anomalies or useful action points (ref: https://github.com/emirozer/kubectl-doctor)
+# - ketall: show really all k8s resources (ref: https://github.com/corneliusweig/ketall)
+# - images: Show container images used in the cluster (ref: https://github.com/chenjiandongx/kubectl-images)
+ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images view-utilization ingress-nginx explore mtail iexec pexec"
+
+# Direnv
+ARG bin_path="/usr/local/bin"
+
+FROM ${DEFAULT_BASE} AS builder
+
+ARG KUBECTL_PLUGINS
+ARG KREW_ROOT
+ARG bin_path
+
+# ENV for build image
+ENV OS="linux" \
+    ARCH="amd64"
+ENV KREW_ROOT=${KREW_ROOT}
+ENV PATH=${KREW_ROOT}/bin:${PATH}
+ENV bin_path=${bin_path}
+
+ENV DEBIAN_FRONTEND=noninteractive
+ARG OPENSSL_VERSION ${OPENSSL_VERSION}
+ARG SSL_PREFIX ${SSL_PREFIX}
+
+SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
+
+WORKDIR /tmp
+
+RUN set -eux; \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+      build-essential \
+      ca-certificates \
+      coreutils \
+      curl \
+      git \
+      zlib1g-dev \
+      ; \
+    git clone https://github.com/openssl/openssl
+
+# Install krew
+RUN set -eux; \
+    KREW="krew-${OS}_${ARCH}" && \
+    curl --fail --silent --show-error --location --remote-name "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
+    tar zxvf "${KREW}.tar.gz" &&\
+    ./"${KREW}" install ${KUBECTL_PLUGINS} \
+    ;
+
+WORKDIR /tmp/openssl
+RUN set -eux; \
+    git checkout "openssl-${OPENSSL_VERSION}" && \
+    ./Configure --prefix="${SSL_PREFIX}" --openssldir="${SSL_PREFIX}" shared zlib &&\
+    make -j "$(nproc)" && \
+    make -j "$(nproc)" install_sw install_ssldirs
+
+
+# The Real Docker Image
+FROM ${DEFAULT_BASE}
+
+# Global ENV
+ARG KREW_ROOT
+ARG bin_path
+ARG CUSTOM_CERTS_DIR=/usr/local/share/ca-certificates
+ARG RDS_PEM_URL="https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem"
+ARG SSL_PREFIX ${SSL_PREFIX}
+ARG HISHTORY_KEY
+
+# Env variables to propagate to all dependencies
+ENV DEBIAN_FRONTEND noninteractive
+ENV CUSTOM_CERTS_DIR ${CUSTOM_CERTS_DIR}
+ENV TERM screen
+ENV TZ UTC
+
+# To make sure the KREW_ROOT is set correctly
+ENV KREW_ROOT=${KREW_ROOT}
+ENV PATH=${KREW_ROOT}/bin:${PATH}
+
+COPY --chmod=755 scripts/apt_install.sh /usr/local/bin/apt_install
+COPY --chmod=755 scripts/mtail.sh /usr/local/krew/store/mtail/v1.2.0/mtail.sh
+COPY --chmod=755 aqua/aqua-checksums.json /etc/aqua/aqua-checksums.json
+COPY --chmod=755 aqua/aqua.yaml /etc/aqua/aqua.yaml
+
+COPY --from=builder "${SSL_PREFIX}" "${SSL_PREFIX}"
+# Install krew
+COPY --from=builder ${KREW_ROOT} ${KREW_ROOT}
+
+SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
+
+# Make sure openssl package doesn't break anything if installed
+# and overwrite library path to use newly build openssl libraries
+RUN set -eux; \
+    if [ -z "${HISHTORY_KEY}" ]; then \
+      echo "Set HISHTORY_KEY"; \
+      exit 1; \
+    fi; \
+    chmod +x /usr/local/bin/apt_install && \
+    /usr/local/bin/apt_install \
+      apt-file \
+      apt-utils \
+      bash-completion \
+      ca-certificates \
+      coreutils \
+      curl \
+      jq \
+      gzip \
+      git \
+      moreutils \
+      nala \
+      less \
+      procps \
+      openssl \
+      python3 \
+      unzip \
+      tar \
+      tmux \
+      tzdata \
+      vim \
+      wget \
+    ; \
+    apt-file update && \
+    OPENSSL_DEBIAN="$(dpkg-query -f='${Version}\n' --show openssl)" && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo "${TZ}" > /etc/timezone && \
+    /usr/bin/openssl version && \
+    for bin in c_rehash openssl; do \
+      dpkg-divert --divert "/usr/bin/${bin}.${OPENSSL_DEBIAN}" --rename "/usr/bin/${bin}" \
+      ; \
+      update-alternatives --install "/usr/bin/${bin}" "${bin}" "${SSL_PREFIX}/bin/${bin}" 10 \
+      ; \
+    done; \
+    echo "${SSL_PREFIX}/lib64" > /etc/ld.so.conf.d/openssl-aviatrix-x84_64-linux-gnu.conf && \
+    ldconfig
+
+ENV PATH ${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-/root/.local/share}/aquaproj-aqua}/bin:${PATH}
+ENV AQUA_GLOBAL_CONFIG /etc/aqua/aqua.yaml
+ENV AQUA_GENERATE_WITH_DETAIL true
+ENV AQUA_PROGRESS_BAR true
+# Aqua setup & configuration
+WORKDIR /etc/aqua
+RUN set -eux; \
+    curl -sSfL -O https://raw.githubusercontent.com/aquaproj/aqua-installer/v3.0.1/aqua-installer \
+    ; \
+    echo "fb4b3b7d026e5aba1fc478c268e8fbd653e01404c8a8c6284fdba88ae62eda6a  aqua-installer" | sha256sum -c && \
+    chmod +x aqua-installer && \
+    ./aqua-installer && \
+    hash -r && \
+    echo ${PATH} && \
+    aqua install -a && \
+    rm -rf ./aqua-installer
+
+WORKDIR ${CUSTOM_CERTS_DIR}/aws
+# The following is fixing the following errors:
+# rehash: warning: skipping rds-combined-ca-bundle.pem,it does not contain exactly one certificate or CRL
+RUN set -eux; \
+    curl -o "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" "${RDS_PEM_URL}" && \
+    csplit -f 'rds-' -b '%02d.crt' "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" '/-----BEGIN CERTIFICATE-----/' '{*}' && \
+    rm -f ${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem && \
+    find ${CUSTOM_CERTS_DIR} -type f -empty -delete && \
+    update-ca-certificates
+
+RUN set -eux; \
+  curl -o "/etc/profile.d/kube-ps1.sh"  "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" && \
+  kubectl completion bash > /etc/profile.d/kubectl.sh && \
+  sed -i -e 's/\(.*\)__start_kubectl kubectl/\1__start_kubectl kubectl\n\1__start_kubectl k/g' /etc/profile.d/kubectl.sh && \
+  curl -o "/etc/profile.d/fzf.sh" "https://raw.githubusercontent.com/junegunn/fzf/master/shell/completion.bash"
+
+
+# hishtory
+RUN set -eux; \
+  curl --fail --silent --show-error --location --remote-name "https://github.com/ddworken/hishtory/releases/download/v0.188/hishtory-linux-amd64" && \
+  chmod +x hishtory-linux-amd64 && \
+  ./hishtory-linux-amd64 install && \
+  ./hishtory-linux-amd64 update && \
+  rm -rfv ./hishtory-linux-amd64 /root/.bash_profile && \
+  /root/.hishtory/hishtory status && \
+  /root/.hishtory/hishtory config-set filter-duplicate-commands true && \
+  echo 'y' | /root/.hishtory/hishtory init "${HISHTORY_KEY}" && \
+  /root/.hishtory/hishtory status
+
+# -- [ Final Env
+ENV KUBE_PS1_SYMBOL_ENABLE=false
+ENV PS1='[\u@\h $(kube_ps1)] \w \$ '
+ENV EDITOR=vim
+ENV SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
+WORKDIR /root
+
+# --[ dotfiles
+COPY bashrc /root/.bashrc
+
+ENTRYPOINT ["/bin/bash"]
+CMD ["--login"]
+
+# To update the aqua just:
+# cd /etc/aqua
+# aqua update
+# aqua update-checksum --all --prune
