@@ -127,6 +127,10 @@ if ! shopt -oq posix; then
 fi
 
 # --[ User defined
+# Hishtory Config:
+export PATH="/root/.hishtory:${PATH}"
+source /root/.hishtory/config.sh
+
 # Environment
 export KUBE_PS1_SYMBOL_ENABLE=false
 export PS1='[\u@\h $(kube_ps1)] \w \$ '

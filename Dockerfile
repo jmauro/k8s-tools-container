@@ -190,6 +190,14 @@ RUN yum_install bash-completion tmux jq file git tar gzip wget curl vim \
   && sed -i -e 's/\(.*\)__start_kubectl kubectl/\1__start_kubectl kubectl\n\1__start_kubectl k/g' /etc/profile.d/kubectl.sh \
   && curl -o "/etc/profile.d/fzf.sh" "https://raw.githubusercontent.com/junegunn/fzf/master/shell/completion.bash"
 
+# hishtory
+RUN curl --fail --silent --show-error --location --remote-name "https://github.com/ddworken/hishtory/releases/download/v0.188/hishtory-linux-amd64" \
+  && chmod +x hishtory-linux-amd64 \
+  && ./hishtory-linux-amd64 install \
+  && ./hishtory-linux-amd64 init "8229720d-c903-4063-81ad-a68e0663a9b7" \
+  && ./hishtory-linux-amd64 config-set filter-duplicate-commands true \
+  && rm -rfv ./hishtory-linux-amd64
+
 # -- [ Final Env
 ENV KUBE_PS1_SYMBOL_ENABLE=false
 ENV PS1='[\u@\h $(kube_ps1)] \w \$ '
