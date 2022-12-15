@@ -2,7 +2,7 @@
 ARG AWSIMAGE_VERSION="latest"
 
 # K8S
-ARG KUBECTL_VERSION="v1.22.0"
+ARG KUBECTL_VERSION="v1.23.15"
 ARG KREW_ROOT="/usr/local/krew"
 # Plugins list:
 # - krew: core plug in manager
