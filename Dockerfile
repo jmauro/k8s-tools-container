@@ -11,7 +11,7 @@ ARG KREW_ROOT="/usr/local/krew"
 # - doctor: scan your k8s cluster to see if there are anomalies or useful action points (ref: https://github.com/emirozer/kubectl-doctor)
 # - ketall: show really all k8s resources (ref: https://github.com/corneliusweig/ketall)
 # - images: Show container images used in the cluster (ref: https://github.com/chenjiandongx/kubectl-images)
-ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images"
+ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images view-utilization"
 
 # YQ
 ARG YQ_VERSION="v4.30.5"
