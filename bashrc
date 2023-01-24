@@ -138,5 +138,10 @@ export EDITOR=vim
 # Aliases
 alias k=kubectl
 
+# Make sure to create independant images
+if [ -d ~/.kube.config ]; then
+  cp -r ~/.kube.config ~/.kube
+fi
+
 # Same behavior as executing `bash -l`
 . /etc/profile
