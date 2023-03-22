@@ -143,5 +143,13 @@ if [ -d ~/.kube.config ]; then
   cp -r ~/.kube.config ~/.kube
 fi
 
+# Loading env
+if [ -d /etc/env.d ]; then
+  for file in /etc/env.d/*.env
+  do
+    . ${file}
+  done
+fi
+
 # Same behavior as executing `bash -l`
 . /etc/profile

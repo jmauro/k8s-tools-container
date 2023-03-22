@@ -68,7 +68,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 
 # AWSCLI
 RUN  VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
-  && printf 'export AWCLI_VERSION=%s\n' "${VERSION}" | tee /etc/env.d/awscli.env
+  && printf 'export AWSCLI_VERSION=%s\n' "${VERSION}" | tee /etc/env.d/awscli.env
 
 # Install kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
