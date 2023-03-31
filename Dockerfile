@@ -142,6 +142,15 @@ RUN VELERO="velero-${VELERO_VERSION}-${OS}-${ARCH}" \
 RUN curl --fail --silent --location https://direnv.net/install.sh | bash \
   && echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
 
+# Install Latest openssl
+RUN git clone https://github.com/openssl/openssl.git
+WORKDIR /tmp/openssl
+# hadolint ignore=DL3032,DL3033
+RUN yum install -y make gcc perl-CPAN.noarch perl-IPC-Run.noarch perl-IPC-Cmd.noarch
+RUN ./Configure \
+  && make \
+  && make install
+
 #================
 # The final image
 #================
@@ -179,11 +188,21 @@ COPY --from=build ${bin_path}/fzf ${bin_path}/fzf
 COPY --from=build ${bin_path}/helm ${bin_path}/helm
 # Install velero
 COPY --from=build ${bin_path}/velero ${bin_path}/velero
+# Install openssl
+COPY --from=build /usr/local/bin/openssl /usr/local/bin
+COPY --from=build /usr/local/bin/c_rehash /usr/local/bin
+COPY --from=build /usr/local/ssl /usr/local/lib64
+COPY --from=build /usr/local/lib64 /usr/local/lib64
+COPY --from=build /usr/local/include/openssl /usr/local/include
 
 COPY scripts/yum_install.sh /usr/bin/yum_install
 RUN chmod +x /usr/bin/yum_install
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# Configure openssl
+RUN echo '/usr/local/lib64' | tee /etc/ld.so.conf.d/lib.conf \
+  && ldconfig
+
 RUN yum_install bash-completion tmux jq file git tar gzip wget curl vim \
   && curl -o "/etc/profile.d/kube-ps1.sh"  "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" \
   && ${bin_path}/kubectl completion bash > /etc/profile.d/kubectl.sh \
