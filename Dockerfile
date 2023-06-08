@@ -31,6 +31,9 @@ ARG HELM_VERSION="v3.10.2"
 # Velero
 ARG VELERO_VERSION="v1.9.4"
 
+# Vault
+ARG VAULT_VERSION="1.13.2"
+
 #================
 # The build image
 #================
@@ -44,6 +47,7 @@ ARG K9S_VERSION
 ARG FZF_VERSION
 ARG HELM_VERSION
 ARG VELERO_VERSION
+ARG VAULT_VERSION
 
 ARG KUBECTL_PLUGINS
 ARG KREW_ROOT
@@ -58,7 +62,7 @@ ENV bin_path=${bin_path}
 
 # Build container so don't need to clean it
 # hadolint ignore=DL3032,DL3033
-RUN yum install -y git tar gzip coreutils curl awk golang make wget
+RUN yum install -y git tar gzip coreutils curl awk golang make wget unzip
 
 # GET ALL BINARIES:
 # -----------------
@@ -138,6 +142,15 @@ RUN VELERO="velero-${VELERO_VERSION}-${OS}-${ARCH}" \
   && mv "${VELERO}/velero" "${bin_path}/velero" \
   && echo "export VELERO_VERSION=\"${VELERO_VERSION}\"" | tee /etc/env.d/velero.env
 
+# Install fzf
+RUN VAULT="vault_${VAULT_VERSION}_${OS}_${ARCH}.zip" \
+  && curl --fail --silent --show-error --location --remote-name "https://releases.hashicorp.com/vault/${VAULT_VERSION}/${VAULT}" \
+  && curl --fail --silent --show-error --location --remote-name "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_SHA256SUMS" \
+  && grep -i ${VAULT} "vault_${VAULT_VERSION}_SHA256SUMS" | sha256sum -c - \
+  && unzip "${VAULT}" \
+  && mv vault ${bin_path} \
+  && echo "export VAULT_VERSION=${VAULT_VERSION}" | tee /etc/env.d/vault.env
+
 # Install direnv
 RUN curl --fail --silent --location https://direnv.net/install.sh | bash \
   && echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
@@ -188,6 +201,8 @@ COPY --from=build ${bin_path}/fzf ${bin_path}/fzf
 COPY --from=build ${bin_path}/helm ${bin_path}/helm
 # Install velero
 COPY --from=build ${bin_path}/velero ${bin_path}/velero
+# Install vault
+COPY --from=build ${bin_path}/vault ${bin_path}/vault
 # Install openssl
 COPY --from=build /usr/local/bin/openssl /usr/local/bin
 COPY --from=build /usr/local/bin/c_rehash /usr/local/bin
