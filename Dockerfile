@@ -97,10 +97,10 @@ RUN DOCTOR="kubectl-doctor_${OS}_${ARCH}" \
 
 # Install yq
 RUN YQ="yq_${OS}_${ARCH}" \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ} \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums_hashes_order \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/extract-checksum.sh \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ}" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums_hashes_order" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/extract-checksum.sh" \
   && bash -x ./extract-checksum.sh SHA-256 ${YQ} | awk '{ print $2 " " $1}' | sha256sum -c - \
   && chmod +x ${YQ} \
   && mv ${YQ} ${bin_path}/yq \
@@ -108,8 +108,8 @@ RUN YQ="yq_${OS}_${ARCH}" \
 
 # Install k9s
 RUN K9S_TAR="k9s_Linux_x86_64.tar.gz" \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/checksums.txt \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/checksums.txt" \
   && grep -i ${K9S_TAR} checksums.txt | sha256sum -c - \
   && tar vxfz ${K9S_TAR} \
   && mv k9s ${bin_path}/ \
@@ -117,8 +117,8 @@ RUN K9S_TAR="k9s_Linux_x86_64.tar.gz" \
 
 # Install fzf
 RUN FZF="fzf-${FZF_VERSION}-${OS}_${ARCH}.tar.gz" \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF} \
-  && curl --fail --silent --show-error --location --remote-name https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf_${FZF_VERSION}_checksums.txt \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/${FZF}" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf_${FZF_VERSION}_checksums.txt" \
   && grep -i ${FZF} fzf_${FZF_VERSION}_checksums.txt | sha256sum -c - \
   && tar vxfz ${FZF} \
   && mv fzf ${bin_path} \
