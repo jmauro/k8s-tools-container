@@ -228,7 +228,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN echo '/usr/local/lib64' | tee /etc/ld.so.conf.d/lib.conf \
   && ldconfig
 
-RUN yum_install bash-completion tmux jq file git tar gzip wget curl vim \
+RUN yum_install amazon-linux-extras bash-completion tmux jq file git tar gzip wget curl vim \
+  && amazon-linux-extras enable python3.8 \
+  && yum_install python3.8 \
+  && ln -sf /usr/bin/python3.8 /usr/bin/python3 \
+  && ln -sf /usr/bin/pip-3.8 /usr/bin/pip3 \
   && curl -o "/etc/profile.d/kube-ps1.sh"  "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" \
   && ${bin_path}/kubectl completion bash > /etc/profile.d/kubectl.sh \
   && sed -i -e 's/\(.*\)__start_kubectl kubectl/\1__start_kubectl kubectl\n\1__start_kubectl k/g' /etc/profile.d/kubectl.sh \
