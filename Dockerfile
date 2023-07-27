@@ -2,7 +2,7 @@
 ARG AWSIMAGE_VERSION="latest"
 
 # K8S
-ARG KUBECTL_VERSION="v1.23.15"
+ARG KUBECTL_VERSION="v1.26.6"
 ARG KREW_ROOT="/usr/local/krew"
 # Plugins list:
 # - krew: core plug in manager
@@ -14,19 +14,19 @@ ARG KREW_ROOT="/usr/local/krew"
 ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images view-utilization ingress-nginx explore mtail"
 
 # YQ
-ARG YQ_VERSION="v4.30.5"
+ARG YQ_VERSION="v4.34.2"
 
 # K9s
-ARG K9S_VERSION="v0.26.7"
+ARG K9S_VERSION="v0.27.4"
 
 # FZF
-ARG FZF_VERSION="0.35.1"
+ARG FZF_VERSION="0.42.0"
 
 # Direnv
 ARG bin_path="/usr/local/bin"
 
 # Helm
-ARG HELM_VERSION="v3.10.2"
+ARG HELM_VERSION="v3.12.2"
 
 # Velero
 ARG VELERO_VERSION="v1.9.4"
@@ -142,7 +142,7 @@ RUN VELERO="velero-${VELERO_VERSION}-${OS}-${ARCH}" \
   && mv "${VELERO}/velero" "${bin_path}/velero" \
   && echo "export VELERO_VERSION=\"${VELERO_VERSION}\"" | tee /etc/env.d/velero.env
 
-# Install fzf
+# Install Vault
 RUN VAULT="vault_${VAULT_VERSION}_${OS}_${ARCH}.zip" \
   && curl --fail --silent --show-error --location --remote-name "https://releases.hashicorp.com/vault/${VAULT_VERSION}/${VAULT}" \
   && curl --fail --silent --show-error --location --remote-name "https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_SHA256SUMS" \
@@ -170,11 +170,6 @@ RUN ./Configure \
 FROM amazon/aws-cli:${AWSIMAGE_VERSION}
 
 # Global ENV
-ARG KUBECTL_VERSION
-ARG YQ_VERSION
-ARG K9S_VERSION
-
-ARG KUBECTL_PLUGINS
 ARG KREW_ROOT
 ARG bin_path
 
