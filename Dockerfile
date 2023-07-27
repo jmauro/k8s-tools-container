@@ -34,6 +34,9 @@ ARG VELERO_VERSION="v1.9.4"
 # Vault
 ARG VAULT_VERSION="1.13.2"
 
+# Eksctl
+ARG EKSCTL_VERSION="v0.150.0"
+
 #================
 # The build image
 #================
@@ -48,6 +51,7 @@ ARG FZF_VERSION
 ARG HELM_VERSION
 ARG VELERO_VERSION
 ARG VAULT_VERSION
+ARG EKSCTL_VERSION
 
 ARG KUBECTL_PLUGINS
 ARG KREW_ROOT
@@ -75,7 +79,7 @@ RUN  VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
   && printf 'export AWSCLI_VERSION=%s\n' "${VERSION}" | tee /etc/env.d/awscli.env
 
 # Install kubectl
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
+RUN curl --fail --silent --show-error --location --remote-name "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
   && chmod +x ./kubectl \
   && mv ./kubectl ${bin_path}/ \
   && printf 'export KUBECTL_VERSION=%s\n' "${KUBECTL_VERSION}" | tee /etc/env.d/kubectl.env
@@ -151,6 +155,15 @@ RUN VAULT="vault_${VAULT_VERSION}_${OS}_${ARCH}.zip" \
   && mv vault ${bin_path} \
   && echo "export VAULT_VERSION=${VAULT_VERSION}" | tee /etc/env.d/vault.env
 
+# Install eksctl
+RUN EKSCTL="eksctl_Linux_${ARCH}.tar.gz" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/eksctl-io/eksctl/releases/download/${EKSCTL_VERSION}/${EKSCTL}" \
+  && curl --fail --silent --show-error --location --remote-name "https://github.com/eksctl-io/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_checksums.txt" \
+  && grep -i ${EKSCTL} eksctl_checksums.txt | sha256sum -c - \
+  && tar -xzf "${EKSCTL}" \
+  && mv eksctl ${bin_path} \
+  && echo "export EKSCTL_VERSION=${EKSCTL_VERSION}" | tee /etc/env.d/eksctl.env
+
 # Install direnv
 RUN curl --fail --silent --location https://direnv.net/install.sh | bash \
   && echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
@@ -198,6 +211,8 @@ COPY --from=build ${bin_path}/helm ${bin_path}/helm
 COPY --from=build ${bin_path}/velero ${bin_path}/velero
 # Install vault
 COPY --from=build ${bin_path}/vault ${bin_path}/vault
+# Install vault
+COPY --from=build ${bin_path}/eksctl ${bin_path}/eksctl
 # Install openssl
 COPY --from=build /usr/local/bin/openssl /usr/local/bin
 COPY --from=build /usr/local/bin/c_rehash /usr/local/bin
