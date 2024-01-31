@@ -1,0 +1,109 @@
+# --[ Global variables
+ARG OPENSSL_VERSION=3.1.3
+ARG SSL_PREFIX="/usr/local/ssl-${OPENSSL_VERSION}"
+ARG DEFAULT_BASE="debian:testing-slim"
+FROM ${DEFAULT_BASE} AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+ARG OPENSSL_VERSION ${OPENSSL_VERSION}
+ARG SSL_PREFIX ${SSL_PREFIX}
+
+SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
+
+WORKDIR /tmp
+
+RUN set -eux; \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+      build-essential \
+      ca-certificates \
+      checkinstall \
+      coreutils \
+      git \
+      zlib1g-dev \
+      ; \
+    git clone https://github.com/openssl/openssl
+
+WORKDIR /tmp/openssl
+RUN set -eux; \
+    git checkout "openssl-${OPENSSL_VERSION}" && \
+    ./Configure --prefix="${SSL_PREFIX}" --openssldir="${SSL_PREFIX}" shared zlib &&\
+    make -j "$(nproc)" && \
+    make -j "$(nproc)" install_sw install_ssldirs
+
+FROM ${DEFAULT_BASE}
+
+ARG CUSTOM_CERTS_DIR=/usr/local/share/ca-certificates
+ARG RDS_PEM_URL="https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem"
+ARG SSL_PREFIX ${SSL_PREFIX}
+
+# Env variables to propagate to all dependencies
+ENV DEBIAN_FRONTEND noninteractive
+ENV CUSTOM_CERTS_DIR ${CUSTOM_CERTS_DIR}
+ENV TERM screen
+ENV TZ UTC
+
+COPY scripts/apt_install.sh /usr/local/bin/apt_install
+COPY aqua/aqua-checksums.json /etc/aqua/aqua-checksums.json
+COPY aqua/aqua.yaml /etc/aqua/aqua.yaml
+
+COPY --from=builder "${SSL_PREFIX}" "${SSL_PREFIX}"
+
+SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
+
+# Make sure openssl package doesn't break anything if installed
+# and overwrite library path to use newly build openssl libraries
+RUN set -eux; \
+    chmod +x /usr/local/bin/apt_install && \
+    /usr/local/bin/apt_install \
+      ca-certificates \
+      coreutils \
+      curl \
+      jq \
+      gzip \
+      nala \
+      openssl \
+      python3 \
+      unzip \
+      tar \
+      tzdata \
+      vim \
+      wget \
+    ; \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo "${TZ}" > /etc/timezone && \
+    /usr/bin/openssl version && \
+    for bin in c_rehash openssl; do \
+      dpkg-divert --divert "/usr/bin/${bin}.3.0.2" --rename "/usr/bin/${bin}" \
+      ; \
+      update-alternatives --install "/usr/bin/${bin}" "${bin}" "${SSL_PREFIX}/bin/${bin}" 10 \
+      ; \
+    done; \
+    echo "${SSL_PREFIX}/lib64" > /etc/ld.so.conf.d/openssl-aviatrix-x84_64-linux-gnu.conf && \
+    ldconfig
+
+ENV PATH ${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/aquaproj-aqua}/bin:${PATH}
+ENV AQUA_GLOBAL_CONFIG /etc/aqua/aqua.yaml
+ENV AQUA_GENERATE_WITH_DETAIL true
+ENV AQUA_PROGRESS_BAR true
+# Aqua setup & configuration
+WORKDIR /etc/aqua
+RUN set -eux; \
+    curl -sSfL -O https://raw.githubusercontent.com/aquaproj/aqua-installer/v2.3.0/aqua-installer \
+    ; \
+    echo "1577b99b74751a5ddeea757198cee3b600fce3ef18990540e4d0e667edcf1b5f  aqua-installer" | sha256sum -c && \
+    chmod +x aqua-installer && \
+    ./aqua-installer && \
+    aqua install -a
+
+WORKDIR ${CUSTOM_CERTS_DIR}/aws
+# The following is fixing the following errors:
+# rehash: warning: skipping rds-combined-ca-bundle.pem,it does not contain exactly one certificate or CRL
+RUN curl -o "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" "${RDS_PEM_URL}" && \
+    csplit -f 'rds-' -b '%02d.crt' "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" '/-----BEGIN CERTIFICATE-----/' '{*}' && \
+    rm -f ${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem && \
+    find ${CUSTOM_CERTS_DIR} -type f -empty -delete && \
+    update-ca-certificates
+
+ENV SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
+WORKDIR /
