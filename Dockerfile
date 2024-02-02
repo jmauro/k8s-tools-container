@@ -71,9 +71,20 @@ RUN yum install -y git tar gzip coreutils curl awk golang make wget unzip
 # GET ALL BINARIES:
 # -----------------
 WORKDIR /tmp
-RUN mkdir -p /etc/env.d
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 
+# Install Latest openssl
+RUN git clone https://github.com/openssl/openssl.git
+WORKDIR /tmp/openssl
+
+# hadolint ignore=DL3032,DL3033
+RUN yum install -y make gcc perl-CPAN.noarch perl-IPC-Run.noarch perl-IPC-Cmd.noarch
+RUN ./Configure \
+  && make -j "$(nproc)"\
+  && make -j "$(nproc)" install
+
+WORKDIR /etc/env.d
+WORKDIR /tmp
 # AWSCLI
 RUN  VERSION=\"$(aws --version | awk '{ print $1}' | cut -d/ -f 2)\" \
   && printf 'export AWSCLI_VERSION=%s\n' "${VERSION}" | tee /etc/env.d/awscli.env
@@ -168,14 +179,6 @@ RUN EKSCTL="eksctl_Linux_${ARCH}.tar.gz" \
 RUN curl --fail --silent --location https://direnv.net/install.sh | bash \
   && echo "export DIRENV_VERSION=\"$(direnv version)\"" | tee /etc/env.d/direnv.env
 
-# Install Latest openssl
-RUN git clone https://github.com/openssl/openssl.git
-WORKDIR /tmp/openssl
-# hadolint ignore=DL3032,DL3033
-RUN yum install -y make gcc perl-CPAN.noarch perl-IPC-Run.noarch perl-IPC-Cmd.noarch
-RUN ./Configure \
-  && make \
-  && make install
 
 #================
 # The final image
