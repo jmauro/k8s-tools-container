@@ -1,6 +1,11 @@
 {
   "checksums": [
     {
+      "id": "github_release/github.com/derailed/k9s/v0.31.7/k9s_Darwin_amd64.tar.gz",
+      "checksum": "6EEADB6B33BE3D2345D4D89F10BBAA225EE62FBCD9357823050DB686B3E7736C",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/derailed/k9s/v0.31.7/k9s_Linux_amd64.tar.gz",
       "checksum": "10A01834FCA8A1C6613AE3ED17CE22575E1D2F4FFB1DD344866DF533ED2D2539",
       "algorithm": "sha256"
@@ -8,6 +13,16 @@
     {
       "id": "github_release/github.com/derailed/k9s/v0.31.7/k9s_Linux_arm64.tar.gz",
       "checksum": "7310CA3D6D8F359457BAEDA2B0BC62571B7A0E068FE07275A774E7B2A9B54243",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/derailed/k9s/v0.31.7/k9s_Windows_amd64.zip",
+      "checksum": "16E442063B05395EA4EA93F56EDFBAC5F347BCFDA85A9C22D5712BD11878E960",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/eksctl-io/eksctl/v0.169.0/eksctl_Darwin_amd64.tar.gz",
+      "checksum": "E331B1583382D1A21A5C7A07A37BEAFF56A54BE1A03929C91639CE28CD007572",
       "algorithm": "sha256"
     },
     {
@@ -21,13 +36,33 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/junegunn/fzf/0.46.0/fzf-0.46.0-linux_amd64.tar.gz",
-      "checksum": "122DA61584A9AEF38F23597B0E5F10416AB3A4AD78B6F20D632D03E35CED63C1",
+      "id": "github_release/github.com/eksctl-io/eksctl/v0.169.0/eksctl_Windows_amd64.zip",
+      "checksum": "8F507DF5224248AD7F281DFEDC8032CC235B675E04629B7F6BFAF59FB3CF99E0",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/junegunn/fzf/0.46.0/fzf-0.46.0-linux_arm64.tar.gz",
-      "checksum": "B8544D4734AB74D2580C1A0C24D78752B5164B2D35801AD3BCA4B685933FA6CC",
+      "id": "github_release/github.com/junegunn/fzf/0.46.1/fzf-0.46.1-darwin_amd64.zip",
+      "checksum": "D64DCC30455F7148257006E44A71724C13146C35CB030D9E1E71AAA74721CEBD",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/junegunn/fzf/0.46.1/fzf-0.46.1-linux_amd64.tar.gz",
+      "checksum": "6878DC810C0E464D392985E4E9D3525F7C4AF346985F4B094CA117CE1BB0838C",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/junegunn/fzf/0.46.1/fzf-0.46.1-linux_arm64.tar.gz",
+      "checksum": "CF8896D8DFD51D7A1D184A7DB220D3050FAA7B508656ED013C905F51BE4DB09C",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/junegunn/fzf/0.46.1/fzf-0.46.1-windows_amd64.zip",
+      "checksum": "5615E671645A59395AB4A637AC3DCDDBDC288A47E2A32E51FEE01C93EFAED2D3",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kubernetes-sigs/krew/v0.4.4/krew-darwin_amd64.tar.gz",
+      "checksum": "5F4D2F34868A87CF1188212CF7CB598E76A32F389054089AAD1FA46E6DAF1E1B",
       "algorithm": "sha256"
     },
     {
@@ -41,6 +76,16 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/kubernetes-sigs/krew/v0.4.4/krew-windows_amd64.tar.gz",
+      "checksum": "DA0DFEB2A598F11FB9CE871EE7F3B1A69BEB371A45F531EE65A71B2201511D28",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/mikefarah/yq/v4.40.5/yq_darwin_amd64",
+      "checksum": "7F88B959C3FD2755E77DBF5BD92780DC3626C1C00AC45D5B5134F04189A142DC",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/mikefarah/yq/v4.40.5/yq_linux_amd64",
       "checksum": "0D6AAF1CF44A8D18FBC7ED0EF14F735A8DF8D2E314C4CC0F0242D35C0A440C95",
       "algorithm": "sha256"
@@ -48,6 +93,16 @@
     {
       "id": "github_release/github.com/mikefarah/yq/v4.40.5/yq_linux_arm64",
       "checksum": "9431F0FA39A0AF03A152D7FE19A86E42E9FF28D503ED4A70598F9261EC944A97",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/mikefarah/yq/v4.40.5/yq_windows_amd64.exe",
+      "checksum": "A613341F93698C978C9FD74CBAD1618EE422F9F8A8240D2EA2FE637160F75DCF",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vmware-tanzu/velero/v1.13.0/velero-v1.13.0-darwin-amd64.tar.gz",
+      "checksum": "27BD1109B7FD6BDA7E479DB105956C2513F1A6764F551A3FD13AFC1BDD2E9E7D",
       "algorithm": "sha256"
     },
     {
@@ -61,13 +116,28 @@
       "algorithm": "sha256"
     },
     {
-      "id": "http/awscli.amazonaws.com/awscli-exe-linux-aarch64-2.15.15.zip",
-      "checksum": "79051F145BB0D0B241B0932EA4FFA0CF98AC23B491E9330F914248C0B4C7C3F2",
+      "id": "github_release/github.com/vmware-tanzu/velero/v1.13.0/velero-v1.13.0-windows-amd64.tar.gz",
+      "checksum": "561ABFB4C4645874970DD4CD9510F7774D57F811B6EEDD5A32B43DC5E4A76BF6",
       "algorithm": "sha256"
     },
     {
-      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.15.15.zip",
-      "checksum": "78A30735E7602DE5100B9C9FD27E22D69CD05BFE11475BD6E6396EFE52795B1F",
+      "id": "http/awscli.amazonaws.com/AWSCLIV2-2.15.16.pkg",
+      "checksum": "E4624AB1B72F0B135F88471F434EA18F933E2803DDB4C6AE66C34FFD8FB87D1D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-aarch64-2.15.16.zip",
+      "checksum": "E417A739A44C056E46C7DAE8EED10398C52C7E53226F9BE73101FB995F233B6A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.15.16.zip",
+      "checksum": "924B954BEE86DE8E9D519A0709E55FCEF531FEF3A10A385DCC3A377EA6365581",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/dl.k8s.io/v1.26.13/bin/darwin/amd64/kubectl",
+      "checksum": "5AEF895B5D0934B8C36EEEBBB7D8F50CB519885752457BF8CFE9CE0AFBED7F4F",
       "algorithm": "sha256"
     },
     {
@@ -81,6 +151,16 @@
       "algorithm": "sha256"
     },
     {
+      "id": "http/dl.k8s.io/v1.26.13/bin/windows/amd64/kubectl.exe",
+      "checksum": "4934465AF5702E3DBDAF0D33506532C40F2F0BA1376A1479BF3512B89995E00A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/get.helm.sh/helm-v3.14.0-darwin-amd64.tar.gz",
+      "checksum": "804586896496F7B3DA97F56089EA00F220E075E969B6FDF6C0B7B9CDC22DE120",
+      "algorithm": "sha256"
+    },
+    {
       "id": "http/get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz",
       "checksum": "F43E1C3387DE24547506AB05D24E5309C0CE0B228C23BD8AA64E9EC4B8206651",
       "algorithm": "sha256"
@@ -88,6 +168,16 @@
     {
       "id": "http/get.helm.sh/helm-v3.14.0-linux-arm64.tar.gz",
       "checksum": "B29E61674731B15F6AD3D1A3118A99D3CC2AB25A911AAD1B8AC8C72D5A9D2952",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/get.helm.sh/helm-v3.14.0-windows-amd64.tar.gz",
+      "checksum": "66B087FC065014854E7F4D9177EF341678D224341F177EE6059923509095B439",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/vault/1.15.5/vault_1.15.5_darwin_amd64.zip",
+      "checksum": "606C6B740639C74C5FB8DC973A4FFDDA15711A1B005EB90CB9FFCD16B7B548DD",
       "algorithm": "sha256"
     },
     {
@@ -101,9 +191,14 @@
       "algorithm": "sha256"
     },
     {
-      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.126.0/registry.yaml",
-      "checksum": "EF1372AD41168C94D7CE3263D73C470523E5AB17918A594FAA1A63BF7DB8F7B5",
+      "id": "http/releases.hashicorp.com/vault/1.15.5/vault_1.15.5_windows_amd64.zip",
+      "checksum": "B519925A780043546EFF46A3C10DCA62A5188DD66CD5100DEC5AC4D78BAB9C36",
       "algorithm": "sha256"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.128.0/registry.yaml",
+      "checksum": "2C8E7B0AC7D3FEA62102ED0154060969E5A8589571D13B1C2585AF08A3CD3F3778325D38271ABF5ED0653D02EB36B7524A98819120EAE01B4FF7DE3B07CD02EE",
+      "algorithm": "sha512"
     }
   ]
 }
