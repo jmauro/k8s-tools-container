@@ -6,38 +6,37 @@ checksum:
   require_checksum: true
   supported_envs:
     - linux
-    - amd64
 registries:
   - type: standard
-    ref: v4.128.0 # renovate: depName=aquaproj/aqua-registry
+    ref: v4.128.0  # renovate: depName=aquaproj/aqua-registry
 packages:
-- name: kubernetes/kubectl@v1.26.13
-  description: The kubectl command line tool lets you control Kubernetes clusters
-  link: https://kubernetes.io/docs/reference/kubectl/
-- name: mikefarah/yq@v4.40.5
-  description: yq is a portable command-line YAML processor
-  link: https://github.com/mikefarah/yq
-- name: helm/helm@v3.14.0
-  description: The Kubernetes Package Manager
-  link: https://github.com/helm/helm
-- name: hashicorp/vault@v1.15.5
-  description: A tool for secrets management, encryption as a service, and privileged access management
-  link: https://github.com/hashicorp/vault
-- name: derailed/k9s@v0.31.7
-  description: Kubernetes CLI To Manage Your Clusters In Style
-  link: https://github.com/derailed/k9s
-- name: weaveworks/eksctl@v0.169.0
-  description: The official CLI for Amazon EKS
-  link: https://github.com/weaveworks/eksctl
-- name: junegunn/fzf@0.46.1
-  description: A command-line fuzzy finder
-  link: https://github.com/junegunn/fzf
-- name: vmware-tanzu/velero@v1.13.0
-  description: Backup and migrate Kubernetes applications and their persistent volumes
-  link: https://github.com/vmware-tanzu/velero
-- name: kubernetes-sigs/krew@v0.4.4
-  description: Find and install kubectl plugins
-  link: https://github.com/kubernetes-sigs/krew
-- name: aws/aws-cli@2.15.16
-  description: The AWS Command Line Interface (AWS CLI) is a unified tool that provides a consistent interface for interacting with all parts of Amazon Web Services
-  link: https://github.com/aws/aws-cli
+  - name: kubernetes/kubectl@v1.26.13
+    description: The kubectl command line tool lets you control Kubernetes clusters
+    link: https://kubernetes.io/docs/reference/kubectl/
+  - name: mikefarah/yq@v4.40.5
+    description: yq is a portable command-line YAML processor
+    link: https://github.com/mikefarah/yq
+  - name: helm/helm@v3.14.0
+    description: The Kubernetes Package Manager
+    link: https://github.com/helm/helm
+  - name: hashicorp/vault@v1.15.5
+    description: A tool for secrets management, encryption as a service, and privileged access management
+    link: https://github.com/hashicorp/vault
+  - name: derailed/k9s@v0.31.7
+    description: Kubernetes CLI To Manage Your Clusters In Style
+    link: https://github.com/derailed/k9s
+  - name: weaveworks/eksctl@v0.169.0
+    description: The official CLI for Amazon EKS
+    link: https://github.com/weaveworks/eksctl
+  - name: junegunn/fzf@0.46.1
+    description: A command-line fuzzy finder
+    link: https://github.com/junegunn/fzf
+  - name: vmware-tanzu/velero@v1.13.0
+    description: Backup and migrate Kubernetes applications and their persistent volumes
+    link: https://github.com/vmware-tanzu/velero
+  - name: kubernetes-sigs/krew@v0.4.4
+    description: Find and install kubectl plugins
+    link: https://github.com/kubernetes-sigs/krew
+  - name: aws/aws-cli@2.15.16
+    description: The AWS Command Line Interface (AWS CLI) is a unified tool that provides a consistent interface for interacting with all parts of Amazon Web Services
+    link: https://github.com/aws/aws-cli

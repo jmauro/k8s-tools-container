@@ -2,7 +2,32 @@
 ARG OPENSSL_VERSION=3.2.1
 ARG SSL_PREFIX="/usr/local/ssl-${OPENSSL_VERSION}"
 ARG DEFAULT_BASE="debian:testing-slim"
+
+ARG KREW_ROOT="/usr/local/krew"
+# Plugins list:
+# - krew: core plug in manager
+# - ctx: switch between contexts (clusters) (ref: https://github.com/ahmetb/kubectx)
+# - ns: switch between Kubernetes namespaces (ref: https://github.com/ahmetb/kubectx)
+# - doctor: scan your k8s cluster to see if there are anomalies or useful action points (ref: https://github.com/emirozer/kubectl-doctor)
+# - ketall: show really all k8s resources (ref: https://github.com/corneliusweig/ketall)
+# - images: Show container images used in the cluster (ref: https://github.com/chenjiandongx/kubectl-images)
+ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images view-utilization ingress-nginx explore mtail"
+
+# Direnv
+ARG bin_path="/usr/local/bin"
+
 FROM ${DEFAULT_BASE} AS builder
+
+ARG KUBECTL_PLUGINS
+ARG KREW_ROOT
+ARG bin_path
+
+# ENV for build image
+ENV OS="linux" \
+    ARCH="amd64"
+ENV KREW_ROOT=${KREW_ROOT}
+ENV PATH=${KREW_ROOT}/bin:${PATH}
+ENV bin_path=${bin_path}
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG OPENSSL_VERSION ${OPENSSL_VERSION}
@@ -31,8 +56,20 @@ RUN set -eux; \
     make -j "$(nproc)" && \
     make -j "$(nproc)" install_sw install_ssldirs
 
+# Install krew
+RUN set -eux; \
+    KREW="krew-${OS}_${ARCH}" && \
+    curl --fail --silent --show-error --location --remote-name "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
+    tar zxvf "${KREW}.tar.gz" &&\
+    ./"${KREW}" install ${KUBECTL_PLUGINS} \
+    ;
+
+# The Real Docker Image
 FROM ${DEFAULT_BASE}
 
+# Global ENV
+ARG KREW_ROOT
+ARG bin_path
 ARG CUSTOM_CERTS_DIR=/usr/local/share/ca-certificates
 ARG RDS_PEM_URL="https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem"
 ARG SSL_PREFIX ${SSL_PREFIX}
@@ -43,11 +80,17 @@ ENV CUSTOM_CERTS_DIR ${CUSTOM_CERTS_DIR}
 ENV TERM screen
 ENV TZ UTC
 
+# To make sure the KREW_ROOT is set correctly
+ENV KREW_ROOT=${KREW_ROOT}
+ENV PATH=${KREW_ROOT}/bin:${PATH}
+
 COPY scripts/apt_install.sh /usr/local/bin/apt_install
 COPY aqua/aqua-checksums.json /etc/aqua/aqua-checksums.json
 COPY aqua/aqua.yaml /etc/aqua/aqua.yaml
 
 COPY --from=builder "${SSL_PREFIX}" "${SSL_PREFIX}"
+# Install krew
+COPY --from=builder ${KREW_ROOT} ${KREW_ROOT}
 
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 
@@ -78,11 +121,12 @@ RUN set -eux; \
       wget \
     ; \
     apt-file update && \
+    OPENSSL_DEBIAN="$(dpkg-query -f='${Version}\n' --show openssl)" && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo "${TZ}" > /etc/timezone && \
     /usr/bin/openssl version && \
     for bin in c_rehash openssl; do \
-      dpkg-divert --divert "/usr/bin/${bin}.3.0.2" --rename "/usr/bin/${bin}" \
+      dpkg-divert --divert "/usr/bin/${bin}.${OPENSSL_DEBIAN}" --rename "/usr/bin/${bin}" \
       ; \
       update-alternatives --install "/usr/bin/${bin}" "${bin}" "${SSL_PREFIX}/bin/${bin}" 10 \
       ; \
