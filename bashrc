@@ -136,7 +136,7 @@ fi
 
 # --[ User defined
 # Hishtory Config:
-export PATH="/root/.hishtory:${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/aquaproj-aqua}/bin:${PATH}"
+export PATH="/root/.hishtory:${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/aquaproj-aqua}/bin:${KREW_ROOT}:${PATH}"
 # shellcheck source=/dev/null
 source /root/.hishtory/config.sh
 

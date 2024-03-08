@@ -44,17 +44,11 @@ RUN set -eux; \
       ca-certificates \
       checkinstall \
       coreutils \
+      curl \
       git \
       zlib1g-dev \
       ; \
     git clone https://github.com/openssl/openssl
-
-WORKDIR /tmp/openssl
-RUN set -eux; \
-    git checkout "openssl-${OPENSSL_VERSION}" && \
-    ./Configure --prefix="${SSL_PREFIX}" --openssldir="${SSL_PREFIX}" shared zlib &&\
-    make -j "$(nproc)" && \
-    make -j "$(nproc)" install_sw install_ssldirs
 
 # Install krew
 RUN set -eux; \
@@ -63,6 +57,14 @@ RUN set -eux; \
     tar zxvf "${KREW}.tar.gz" &&\
     ./"${KREW}" install ${KUBECTL_PLUGINS} \
     ;
+
+WORKDIR /tmp/openssl
+RUN set -eux; \
+    git checkout "openssl-${OPENSSL_VERSION}" && \
+    ./Configure --prefix="${SSL_PREFIX}" --openssldir="${SSL_PREFIX}" shared zlib &&\
+    make -j "$(nproc)" && \
+    make -j "$(nproc)" install_sw install_ssldirs
+
 
 # The Real Docker Image
 FROM ${DEFAULT_BASE}
@@ -110,6 +112,7 @@ RUN set -eux; \
       git \
       moreutils \
       nala \
+      less \
       procps \
       openssl \
       python3 \
