@@ -136,7 +136,7 @@ fi
 
 # --[ User defined
 # Hishtory Config:
-export PATH="/root/.hishtory:${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/aquaproj-aqua}/bin:${KREW_ROOT}:${PATH}"
+export PATH="/root/.hishtory:${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/aquaproj-aqua}/bin:${KREW_ROOT}/bin:${PATH}"
 # shellcheck source=/dev/null
 source /root/.hishtory/config.sh
 
@@ -162,4 +162,3 @@ if [ -d /etc/env.d ]; then
 fi
 
 # Same behavior as executing `bash -l` for RedHat
-#. /etc/profile

@@ -176,7 +176,7 @@ RUN set -eux; \
   chmod +x hishtory-linux-amd64 && \
   ./hishtory-linux-amd64 install && \
   ./hishtory-linux-amd64 update && \
-  rm -rfv ./hishtory-linux-amd64 && \
+  rm -rfv ./hishtory-linux-amd64 /root/.bash_profile && \
   /root/.hishtory/hishtory status && \
   /root/.hishtory/hishtory init "8229720d-c903-4063-81ad-a68e0663a9b7" && \
   /root/.hishtory/hishtory config-set filter-duplicate-commands true && \
@@ -192,8 +192,8 @@ WORKDIR /root
 # --[ dotfiles
 COPY bashrc /root/.bashrc
 
-# Could use systemd + exec
 ENTRYPOINT ["/bin/bash"]
+CMD ["--login"]
 
 # To update the aqua just:
 # cd /etc/aqua
