@@ -125,6 +125,7 @@ RUN set -eux; \
       tar \
       tmux \
       tzdata \
+      uuid-runtime \
       vim \
       wget \
     ; \

@@ -137,6 +137,10 @@ fi
 # --[ User defined
 # Hishtory Config:
 export PATH="/root/.hishtory:${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/aquaproj-aqua}/bin:${KREW_ROOT}/bin:${PATH}"
+# Changing Device_id for hishtory
+variable="$(uuidgen)"
+jq --arg variable "$variable" '.device_id = $variable' .hishtory/.hishtory.config | sponge .hishtory/.hishtory.config
+
 # shellcheck source=/dev/null
 source /root/.hishtory/config.sh
 
