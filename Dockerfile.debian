@@ -179,10 +179,14 @@ RUN set -eux; \
   update-ca-certificates
 
 RUN set -eux; \
-  curl -o "/etc/profile.d/kube-ps1.sh"  "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" && \
+  curl -o "/etc/profile.d/kube-ps1.sh" "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" && \
   kubectl completion bash > /etc/profile.d/kubectl.sh && \
   sed -i -e 's/\(.*\)__start_kubectl kubectl/\1__start_kubectl kubectl\n\1__start_kubectl k/g' /etc/profile.d/kubectl.sh && \
   curl -o "/etc/profile.d/fzf.sh" "https://raw.githubusercontent.com/junegunn/fzf/master/shell/completion.bash"
+
+RUN set -eux; \
+  curl -o "/usr/local/bin/ktail" "https://github.com/atombender/ktail/releases/download/v1.4.0/ktail-linux-amd64" && \
+  chmod +x "/usr/local/bin/ktail"
 
 # hishtory
 RUN set -eux; \
