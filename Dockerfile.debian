@@ -97,6 +97,13 @@ COPY --from=builder ${KREW_ROOT} ${KREW_ROOT}
 
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 
+RUN set -eux; \
+  RECOMMENDS="/etc/apt/apt.conf.d/99norecommends" && \
+  echo 'APT::Install-Recommends "false";'              >  "${RECOMMENDS}" && \
+  echo 'APT::AutoRemove::RecommendsImportant "false";' >> "${RECOMMENDS}" && \
+  echo 'APT::AutoRemove::SuggestsImportant "false";'   >> "${RECOMMENDS}" && \
+  cat "${RECOMMENDS}"
+
 # Make sure openssl package doesn't break anything if installed
 # and overwrite library path to use newly build openssl libraries
 RUN set -eux; \
@@ -157,7 +164,7 @@ RUN set -eux; \
     chmod +x aqua-installer && \
     ./aqua-installer && \
     hash -r && \
-    echo ${PATH} && \
+    echo "${PATH}" && \
     aqua install -a && \
     rm -rf ./aqua-installer
 
@@ -176,7 +183,6 @@ RUN set -eux; \
   kubectl completion bash > /etc/profile.d/kubectl.sh && \
   sed -i -e 's/\(.*\)__start_kubectl kubectl/\1__start_kubectl kubectl\n\1__start_kubectl k/g' /etc/profile.d/kubectl.sh && \
   curl -o "/etc/profile.d/fzf.sh" "https://raw.githubusercontent.com/junegunn/fzf/master/shell/completion.bash"
-
 
 # hishtory
 RUN set -eux; \
