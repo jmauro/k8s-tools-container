@@ -116,6 +116,7 @@ RUN set -eux; \
     apt-file \
     apt-utils \
     bash-completion \
+    bind9-dnsutils \
     ca-certificates \
     coreutils \
     curl \
