@@ -38,31 +38,31 @@ SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 WORKDIR /tmp
 
 RUN set -eux; \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-      build-essential \
-      ca-certificates \
-      coreutils \
-      curl \
-      git \
-      zlib1g-dev \
-      ; \
-    git clone https://github.com/openssl/openssl
+  apt-get update && \
+  apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    coreutils \
+    curl \
+    git \
+    zlib1g-dev \
+    ; \
+  git clone https://github.com/openssl/openssl
 
 # Install krew
 RUN set -eux; \
-    KREW="krew-${OS}_${ARCH}" && \
-    curl --fail --silent --show-error --location --remote-name "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
-    tar zxvf "${KREW}.tar.gz" &&\
-    ./"${KREW}" install ${KUBECTL_PLUGINS} \
-    ;
+  KREW="krew-${OS}_${ARCH}" && \
+  curl --fail --silent --show-error --location --remote-name "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
+  tar zxvf "${KREW}.tar.gz" &&\
+  ./"${KREW}" install ${KUBECTL_PLUGINS} \
+  ;
 
 WORKDIR /tmp/openssl
 RUN set -eux; \
-    git checkout "openssl-${OPENSSL_VERSION}" && \
-    ./Configure --prefix="${SSL_PREFIX}" --openssldir="${SSL_PREFIX}" shared zlib &&\
-    make -j "$(nproc)" && \
-    make -j "$(nproc)" install_sw install_ssldirs
+  git checkout "openssl-${OPENSSL_VERSION}" && \
+  ./Configure --prefix="${SSL_PREFIX}" --openssldir="${SSL_PREFIX}" shared zlib &&\
+  make -j "$(nproc)" && \
+  make -j "$(nproc)" install_sw install_ssldirs
 
 
 # The Real Docker Image
@@ -98,6 +98,10 @@ COPY --from=builder ${KREW_ROOT} ${KREW_ROOT}
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 
 RUN set -eux; \
+  if [ -z "${HISHTORY_KEY}" ]; then \
+    echo "Set HISHTORY_KEY"; \
+    exit 1; \
+  fi; \
   RECOMMENDS="/etc/apt/apt.conf.d/99norecommends" && \
   echo 'APT::Install-Recommends "false";'              >  "${RECOMMENDS}" && \
   echo 'APT::AutoRemove::RecommendsImportant "false";' >> "${RECOMMENDS}" && \
@@ -107,49 +111,45 @@ RUN set -eux; \
 # Make sure openssl package doesn't break anything if installed
 # and overwrite library path to use newly build openssl libraries
 RUN set -eux; \
-    if [ -z "${HISHTORY_KEY}" ]; then \
-      echo "Set HISHTORY_KEY"; \
-      exit 1; \
-    fi; \
-    chmod +x /usr/local/bin/apt_install && \
-    /usr/local/bin/apt_install \
-      apt-file \
-      apt-utils \
-      bash-completion \
-      ca-certificates \
-      coreutils \
-      curl \
-      jq \
-      gzip \
-      git \
-      moreutils \
-      nala \
-      nodejs \
-      less \
-      procps \
-      openssl \
-      python3 \
-      unzip \
-      tar \
-      tmux \
-      tzdata \
-      uuid-runtime \
-      vim \
-      wget \
+  chmod +x /usr/local/bin/apt_install && \
+  /usr/local/bin/apt_install \
+    apt-file \
+    apt-utils \
+    bash-completion \
+    ca-certificates \
+    coreutils \
+    curl \
+    jq \
+    gzip \
+    git \
+    moreutils \
+    nala \
+    nodejs \
+    less \
+    procps \
+    openssl \
+    python3 \
+    unzip \
+    tar \
+    tmux \
+    tzdata \
+    uuid-runtime \
+    vim \
+    wget \
+  ; \
+  apt-file update && \
+  OPENSSL_DEBIAN="$(dpkg-query -f='${Version}\n' --show openssl)" && \
+  ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+  echo "${TZ}" > /etc/timezone && \
+  /usr/bin/openssl version && \
+  for bin in c_rehash openssl; do \
+    dpkg-divert --divert "/usr/bin/${bin}.${OPENSSL_DEBIAN}" --rename "/usr/bin/${bin}" \
     ; \
-    apt-file update && \
-    OPENSSL_DEBIAN="$(dpkg-query -f='${Version}\n' --show openssl)" && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo "${TZ}" > /etc/timezone && \
-    /usr/bin/openssl version && \
-    for bin in c_rehash openssl; do \
-      dpkg-divert --divert "/usr/bin/${bin}.${OPENSSL_DEBIAN}" --rename "/usr/bin/${bin}" \
-      ; \
-      update-alternatives --install "/usr/bin/${bin}" "${bin}" "${SSL_PREFIX}/bin/${bin}" 10 \
-      ; \
-    done; \
-    echo "${SSL_PREFIX}/lib64" > /etc/ld.so.conf.d/openssl-aviatrix-x84_64-linux-gnu.conf && \
-    ldconfig
+    update-alternatives --install "/usr/bin/${bin}" "${bin}" "${SSL_PREFIX}/bin/${bin}" 10 \
+    ; \
+  done; \
+  echo "${SSL_PREFIX}/lib64" > /etc/ld.so.conf.d/openssl-aviatrix-x84_64-linux-gnu.conf && \
+  ldconfig
 
 ENV PATH ${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-/root/.local/share}/aquaproj-aqua}/bin:${PATH}
 ENV AQUA_GLOBAL_CONFIG /etc/aqua/aqua.yaml
@@ -158,25 +158,25 @@ ENV AQUA_PROGRESS_BAR true
 # Aqua setup & configuration
 WORKDIR /etc/aqua
 RUN set -eux; \
-    curl -sSfL -O https://raw.githubusercontent.com/aquaproj/aqua-installer/v3.0.1/aqua-installer \
-    ; \
-    echo "fb4b3b7d026e5aba1fc478c268e8fbd653e01404c8a8c6284fdba88ae62eda6a  aqua-installer" | sha256sum -c && \
-    chmod +x aqua-installer && \
-    ./aqua-installer && \
-    hash -r && \
-    echo "${PATH}" && \
-    aqua install -a && \
-    rm -rf ./aqua-installer
+  curl -sSfL -O https://raw.githubusercontent.com/aquaproj/aqua-installer/v3.0.1/aqua-installer \
+  ; \
+  echo "fb4b3b7d026e5aba1fc478c268e8fbd653e01404c8a8c6284fdba88ae62eda6a  aqua-installer" | sha256sum -c && \
+  chmod +x aqua-installer && \
+  ./aqua-installer && \
+  hash -r && \
+  echo "${PATH}" && \
+  aqua install -a && \
+  rm -rf ./aqua-installer
 
 WORKDIR ${CUSTOM_CERTS_DIR}/aws
 # The following is fixing the following errors:
 # rehash: warning: skipping rds-combined-ca-bundle.pem,it does not contain exactly one certificate or CRL
 RUN set -eux; \
-    curl -o "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" "${RDS_PEM_URL}" && \
-    csplit -f 'rds-' -b '%02d.crt' "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" '/-----BEGIN CERTIFICATE-----/' '{*}' && \
-    rm -f ${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem && \
-    find ${CUSTOM_CERTS_DIR} -type f -empty -delete && \
-    update-ca-certificates
+  curl -o "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" "${RDS_PEM_URL}" && \
+  csplit -f 'rds-' -b '%02d.crt' "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" '/-----BEGIN CERTIFICATE-----/' '{*}' && \
+  rm -f ${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem && \
+  find ${CUSTOM_CERTS_DIR} -type f -empty -delete && \
+  update-ca-certificates
 
 RUN set -eux; \
   curl -o "/etc/profile.d/kube-ps1.sh"  "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" && \
