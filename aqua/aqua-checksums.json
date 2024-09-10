@@ -6,13 +6,13 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/eksctl-io/eksctl/v0.183.0/eksctl_Linux_amd64.tar.gz",
-      "checksum": "B0D654115A40CE29AD5D0265D24D5BB046E34632563F37554F267C7457B5A4F4",
+      "id": "github_release/github.com/eksctl-io/eksctl/v0.190.0/eksctl_Linux_amd64.tar.gz",
+      "checksum": "58718BCE83B9DA978098CC9FE5AD4D9686F8535261AAFB5003B7ACE2BC1124B2",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/junegunn/fzf/0.53.0/fzf-0.53.0-linux_amd64.tar.gz",
-      "checksum": "AF2663C3309967DC191D21537E53C2E9F8A37F490A32456B9498A006F05E3796",
+      "id": "github_release/github.com/junegunn/fzf/v0.55.0/fzf-0.55.0-linux_amd64.tar.gz",
+      "checksum": "4DF2393776942780DDAB2CEA713DDAAC06CD5C3886CD23BC9119A6D3AA1E02BD",
       "algorithm": "sha256"
     },
     {
@@ -20,38 +20,39 @@
       "checksum": "E471396B0ED4F2BE092B4854CC030DFCBB12B86197972E7BEF0CB89AD9C72477",
       "algorithm": "sha256"
     },
-    {                                                                                                                                                                                                                                                                                                                             "id": "github_release/github.com/mikefarah/yq/v4.44.2/yq_linux_amd64",
-      "checksum": "246B781828353A59FB04FFAADA241F78A8F3F25C623047B40306DEF1F6806E71",
+    {
+      "id": "github_release/github.com/mikefarah/yq/v4.44.3/yq_linux_amd64",
+      "checksum": "A2C097180DD884A8D50C956EE16A9CEC070F30A7947CF4EBF87D5F36213E9ED7",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/vmware-tanzu/velero/v1.14.0/velero-v1.14.0-linux-amd64.tar.gz",
-      "checksum": "9B066714CDB874FE34EC123645385D6F8C40C43308BBEDF11D3265A7AF17FDA6",
+      "id": "github_release/github.com/vmware-tanzu/velero/v1.14.1/velero-v1.14.1-linux-amd64.tar.gz",
+      "checksum": "1E123F9DEB9479F1CD41BA53B799D73B962CD6FF16ACEBFCA233725638C73DB2",
       "algorithm": "sha256"
     },
     {
-      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.17.0.zip",
-      "checksum": "229BDC40A4B072C99570E2D07CBC1E1BD6EA67CA10F018B54271189A61F9B067",
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.17.47.zip",
+      "checksum": "278C12202D9AE9E92162605E9ADEB48811D57FB64A7A135C4E55AC3579C09778",
       "algorithm": "sha256"
     },
     {
-      "id": "http/dl.k8s.io/v1.30.2/bin/linux/amd64/kubectl",
-      "checksum": "C6E9C45CE3F82C90663E3C30DB3B27C167E8B19D83ED4048B61C1013F6A7C66E",
+      "id": "http/dl.k8s.io/v1.31.0/bin/linux/amd64/kubectl",
+      "checksum": "7C27ADC64A84D1C0CC3DCF7BF4B6E916CC00F3F576A2DBAC51B318D926032437",
       "algorithm": "sha256"
     },
     {
-      "id": "http/get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz",
-      "checksum": "2694B91C3E501CFF57CAF650E639604A274645F61AF2EA4D601677B746B44FE2",
+      "id": "http/get.helm.sh/helm-v3.15.4-linux-amd64.tar.gz",
+      "checksum": "11400FECFC07FD6F034863E4E0C4C4445594673FD2A129E701FE41F31170CFA9",
       "algorithm": "sha256"
     },
     {
-      "id": "http/releases.hashicorp.com/vault/1.17.0/vault_1.17.0_linux_amd64.zip",
-      "checksum": "79263A65E3F98B42CE9FE6A955231466435D84FBD56E3FEA393418985156FE7D",
+      "id": "http/releases.hashicorp.com/vault/1.17.5/vault_1.17.5_linux_amd64.zip",
+      "checksum": "67EB9F95D37975E2525BBD455E19528A7759F3A56022DE064BF8605FC220BE47",
       "algorithm": "sha256"
     },
     {
-      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.196.0/registry.yaml",
-      "checksum": "8D720E70A301A8B0AC15111B3466119590328F8FBBB817EADFD51D8D22BF1BDE40D8EDA82C5EEAF0D3A40F5248BC7F72151C73858E2DE1B46F05C49EC66520AF",
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.220.0/registry.yaml",
+      "checksum": "4F4A69B74FE069F8C713934CA92BED5527CED92E27337A98721EB21B0ACF62C175AF7B179D809FEDC250BD2DA170C505175359B0BFB06C6B01D9829CFA77F6D4",
       "algorithm": "sha512"
     }
   ]
