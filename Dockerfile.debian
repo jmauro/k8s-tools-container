@@ -1,5 +1,5 @@
 # --[ Global variables
-ARG OPENSSL_VERSION=3.3.1
+ARG OPENSSL_VERSION=3.3.2
 ARG SSL_PREFIX="/usr/local/ssl-${OPENSSL_VERSION}"
 ARG DEFAULT_BASE="debian:testing-slim"
 
