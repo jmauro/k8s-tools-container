@@ -180,7 +180,7 @@ RUN set -eux; \
 
 # hishtory
 RUN set -eux; \
-  curl --fail --silent --show-error --location --remote-name "https://github.com/ddworken/hishtory/releases/download/v0.188/hishtory-linux-amd64" && \
+  curl --fail --silent --show-error --location --remote-name "https://github.com/ddworken/hishtory/releases/download/v0.311/hishtory-linux-amd64" && \
   chmod +x hishtory-linux-amd64 && \
   ./hishtory-linux-amd64 install && \
   ./hishtory-linux-amd64 update && \
