@@ -16,6 +16,9 @@ ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images view-utilization ingress-
 # Direnv
 ARG bin_path="/usr/local/bin"
 
+# Curl options
+ARG CURL_OPTS="--fail --silent --show-error --location --remote-name"
+
 FROM ${DEFAULT_BASE} AS builder
 
 ARG KUBECTL_PLUGINS
@@ -30,8 +33,9 @@ ENV PATH=${KREW_ROOT}/bin:${PATH}
 ENV bin_path=${bin_path}
 
 ENV DEBIAN_FRONTEND=noninteractive
-ARG OPENSSL_VERSION ${OPENSSL_VERSION}
-ARG SSL_PREFIX ${SSL_PREFIX}
+ARG OPENSSL_VERSION "${OPENSSL_VERSION}"
+ARG SSL_PREFIX "${SSL_PREFIX}"
+ARG CURL_OPTS "${CURL_OPTS}"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 
@@ -52,7 +56,7 @@ RUN set -eux; \
 # Install krew
 RUN set -eux; \
   KREW="krew-${OS}_${ARCH}" && \
-  curl --fail --silent --show-error --location --remote-name "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
+  curl ${CURL_OPTS} "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
   tar zxvf "${KREW}.tar.gz" &&\
   ./"${KREW}" install ${KUBECTL_PLUGINS} \
   ;
@@ -73,18 +77,19 @@ ARG KREW_ROOT
 ARG bin_path
 ARG CUSTOM_CERTS_DIR=/usr/local/share/ca-certificates
 ARG RDS_PEM_URL="https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem"
-ARG SSL_PREFIX ${SSL_PREFIX}
+ARG SSL_PREFIX "${SSL_PREFIX}"
+ARG CURL_OPTS "${CURL_OPTS}"
 ARG HISHTORY_KEY
 
 # Env variables to propagate to all dependencies
 ENV DEBIAN_FRONTEND noninteractive
-ENV CUSTOM_CERTS_DIR ${CUSTOM_CERTS_DIR}
+ENV CUSTOM_CERTS_DIR "${CUSTOM_CERTS_DIR}"
 ENV TERM screen
 ENV TZ UTC
 
 # To make sure the KREW_ROOT is set correctly
 ENV KREW_ROOT=${KREW_ROOT}
-ENV PATH=${KREW_ROOT}/bin:${PATH}
+ENV PATH="${KREW_ROOT}/bin:${PATH}"
 
 COPY --chmod=755 scripts/apt_install.sh /usr/local/bin/apt_install
 COPY --chmod=755 scripts/mtail.sh /usr/local/krew/store/mtail/v1.2.0/mtail.sh
@@ -93,7 +98,7 @@ COPY --chmod=755 aqua/aqua.yaml /etc/aqua/aqua.yaml
 
 COPY --from=builder "${SSL_PREFIX}" "${SSL_PREFIX}"
 # Install krew
-COPY --from=builder ${KREW_ROOT} ${KREW_ROOT}
+COPY --from=builder "${KREW_ROOT}" "${KREW_ROOT}"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "xtrace", "-c"]
 
@@ -173,25 +178,25 @@ WORKDIR ${CUSTOM_CERTS_DIR}/aws
 # The following is fixing the following errors:
 # rehash: warning: skipping rds-combined-ca-bundle.pem,it does not contain exactly one certificate or CRL
 RUN set -eux; \
-  curl -o "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" "${RDS_PEM_URL}" && \
+  curl ${CURL_OPTS} --output "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" "${RDS_PEM_URL}" && \
   csplit -f 'rds-' -b '%02d.crt' "${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem" '/-----BEGIN CERTIFICATE-----/' '{*}' && \
   rm -f ${CUSTOM_CERTS_DIR}/aws/rds-combined-ca-bundle.pem && \
   find ${CUSTOM_CERTS_DIR} -type f -empty -delete && \
   update-ca-certificates
 
 RUN set -eux; \
-  curl -o "/etc/profile.d/kube-ps1.sh" "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" && \
+  curl ${CURL_OPTS} --output "/etc/profile.d/kube-ps1.sh" "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" && \
   kubectl completion bash > /etc/profile.d/kubectl.sh && \
   sed -i -e 's/\(.*\)__start_kubectl kubectl/\1__start_kubectl kubectl\n\1__start_kubectl k/g' /etc/profile.d/kubectl.sh && \
-  curl -o "/etc/profile.d/fzf.sh" "https://raw.githubusercontent.com/junegunn/fzf/master/shell/completion.bash"
+  curl ${CURL_OPTS} --output "/etc/profile.d/fzf.sh" "https://raw.githubusercontent.com/junegunn/fzf/master/shell/completion.bash"
 
 RUN set -eux; \
-  curl -o "/usr/local/bin/ktail" "https://github.com/atombender/ktail/releases/download/v1.4.0/ktail-linux-amd64" && \
+  curl ${CURL_OPTS} --output "/usr/local/bin/ktail" "https://github.com/atombender/ktail/releases/download/v1.4.0/ktail-linux-amd64" && \
   chmod +x "/usr/local/bin/ktail"
 
 # hishtory
 RUN set -eux; \
-  curl --fail --silent --show-error --location --remote-name "https://github.com/ddworken/hishtory/releases/download/v0.311/hishtory-linux-amd64" && \
+  curl ${CURL_OPTS} "https://github.com/ddworken/hishtory/releases/download/v0.311/hishtory-linux-amd64" && \
   chmod +x hishtory-linux-amd64 && \
   ./hishtory-linux-amd64 install && \
   ./hishtory-linux-amd64 update && \
