@@ -144,6 +144,9 @@ jq --arg variable "$variable" '.device_id = $variable' .hishtory/.hishtory.confi
 # shellcheck source=/dev/null
 source /root/.hishtory/config.sh
 
+# Enable direnv
+eval "$(direnv hook bash)"
+
 # Environment
 export KUBE_PS1_SYMBOL_ENABLE=false
 export PS1='[\u@\h $(kube_ps1)] \w \$ '
