@@ -1,13 +1,28 @@
 {
   "checksums": [
     {
+      "id": "github_release/github.com/argoproj/argo-cd/v2.12.4/argocd-linux-amd64",
+      "checksum": "A0EE9EF688DBB8561A1BCE866C0EB5F3FE872515FBCF575949711C4997B07015",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/derailed/k9s/v0.32.5/k9s_Linux_amd64.tar.gz",
       "checksum": "33C31BF5FEBA292B59B8DABE5547CB52AB565521EE5619B52EB4BD4BF226CEA3",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/eksctl-io/eksctl/v0.190.0/eksctl_Linux_amd64.tar.gz",
-      "checksum": "58718BCE83B9DA978098CC9FE5AD4D9686F8535261AAFB5003B7ACE2BC1124B2",
+      "id": "github_release/github.com/direnv/direnv/v2.34.0/direnv.linux-amd64",
+      "checksum": "F7F2C814C2EAE48641E4BDE9BF11F463E309C8F7E3737F96C78588150E1DCE25",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/eksctl-io/eksctl/v0.191.0/eksctl_Linux_amd64.tar.gz",
+      "checksum": "0AA06745F4CEF66B39E340F23A44D0C4B886DF770552BA4B4E3ECEDA89B086E5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/gruntwork-io/terragrunt/v0.67.15/terragrunt_linux_amd64",
+      "checksum": "461F7ED6C12CBC954A10D21BE745C96EDF551178270BA6CEE89E7A4B53521756",
       "algorithm": "sha256"
     },
     {
@@ -31,33 +46,33 @@
       "algorithm": "sha256"
     },
     {
-      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.17.47.zip",
-      "checksum": "278C12202D9AE9E92162605E9ADEB48811D57FB64A7A135C4E55AC3579C09778",
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.17.63.zip",
+      "checksum": "C522B373953885EACAD54EB5FDE5E2696AD9321D02D66B23144D9E91413F9E04",
       "algorithm": "sha256"
     },
     {
-      "id": "http/dl.k8s.io/v1.31.0/bin/linux/amd64/kubectl",
-      "checksum": "7C27ADC64A84D1C0CC3DCF7BF4B6E916CC00F3F576A2DBAC51B318D926032437",
+      "id": "http/dl.k8s.io/v1.31.1/bin/linux/amd64/kubectl",
+      "checksum": "57B514A7FACCE4EE62C93B8DC21FDA8CF62EF3FED22E44FFC9D167EAB843B2AE",
       "algorithm": "sha256"
     },
     {
-      "id": "http/get.helm.sh/helm-v3.15.4-linux-amd64.tar.gz",
-      "checksum": "11400FECFC07FD6F034863E4E0C4C4445594673FD2A129E701FE41F31170CFA9",
+      "id": "http/get.helm.sh/helm-v3.16.1-linux-amd64.tar.gz",
+      "checksum": "E57E826410269D72BE3113333DBFAAC0D8DFDD1B0CC4E9CB08BDF97722731CA9",
       "algorithm": "sha256"
     },
     {
-      "id": "http/releases.hashicorp.com/vault/1.17.5/vault_1.17.5_linux_amd64.zip",
-      "checksum": "67EB9F95D37975E2525BBD455E19528A7759F3A56022DE064BF8605FC220BE47",
+      "id": "http/releases.hashicorp.com/terraform/1.9.6/terraform_1.9.6_linux_amd64.zip",
+      "checksum": "F2C90FB1EFB2AD411519D1D3CCBAEE7489A60E3147F2206FDB824FB35FAC9C1C",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/direnv/direnv/v2.34.0/direnv.linux-amd64",
-      "checksum": "F7F2C814C2EAE48641E4BDE9BF11F463E309C8F7E3737F96C78588150E1DCE25",
+      "id": "http/releases.hashicorp.com/vault/1.17.6/vault_1.17.6_linux_amd64.zip",
+      "checksum": "0CDDC1FBBB88583B5BA5B845F9F8FAE47C6FB39A6D48CD543C6BA6FD3AC1A669",
       "algorithm": "sha256"
     },
     {
-      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.220.0/registry.yaml",
-      "checksum": "4F4A69B74FE069F8C713934CA92BED5527CED92E27337A98721EB21B0ACF62C175AF7B179D809FEDC250BD2DA170C505175359B0BFB06C6B01D9829CFA77F6D4",
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.228.0/registry.yaml",
+      "checksum": "B596A15D104C9B5A07E0E209FA1DC44691F0349593E0EA638EC7F78D831E956A40B92ABC861FEAB837A6A214AD24FF0AF54A183B9FB52CCFBA024057DD6CDC72",
       "algorithm": "sha512"
     }
   ]
