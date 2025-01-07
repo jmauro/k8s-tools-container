@@ -1,5 +1,5 @@
 # --[ Global variables
-ARG OPENSSL_VERSION=3.3.2
+ARG OPENSSL_VERSION=3.4.0
 ARG SSL_PREFIX="/usr/local/ssl-${OPENSSL_VERSION}"
 ARG DEFAULT_BASE="debian:testing-slim"
 
@@ -11,7 +11,7 @@ ARG KREW_ROOT="/usr/local/krew"
 # - doctor: scan your k8s cluster to see if there are anomalies or useful action points (ref: https://github.com/emirozer/kubectl-doctor)
 # - ketall: show really all k8s resources (ref: https://github.com/corneliusweig/ketall)
 # - images: Show container images used in the cluster (ref: https://github.com/chenjiandongx/kubectl-images)
-ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images view-utilization ingress-nginx explore mtail iexec pexec"
+ARG KUBECTL_PLUGINS="krew ctx ns doctor get-all images view-utilization explore mtail iexec pexec"
 
 # Direnv
 ARG bin_path="/usr/local/bin"
@@ -203,7 +203,7 @@ RUN set -eux; \
   rm -rfv ./hishtory-linux-amd64 /root/.bash_profile && \
   /root/.hishtory/hishtory status && \
   /root/.hishtory/hishtory config-set filter-duplicate-commands true && \
-  echo 'y' | /root/.hishtory/hishtory init "${HISHTORY_KEY}" && \
+  /root/.hishtory/hishtory init --force "${HISHTORY_KEY}" && \
   /root/.hishtory/hishtory status
 
 # -- [ Final Env
@@ -215,6 +215,7 @@ WORKDIR /root
 
 # --[ dotfiles
 COPY bashrc /root/.bashrc
+COPY bash_logout /root/.bash_logout
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["--login"]
