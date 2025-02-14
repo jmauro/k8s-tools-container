@@ -1,33 +1,33 @@
 {
   "checksums": [
     {
-      "id": "github_release/github.com/argoproj/argo-cd/v2.12.4/argocd-linux-amd64",
-      "checksum": "A0EE9EF688DBB8561A1BCE866C0EB5F3FE872515FBCF575949711C4997B07015",
+      "id": "github_release/github.com/argoproj/argo-cd/v2.14.2/argocd-linux-amd64",
+      "checksum": "3445727DFA8A91CA9DF03030A632F7A3E67C5E30E697E8F0242FD3E7915A241A",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/derailed/k9s/v0.32.5/k9s_Linux_amd64.tar.gz",
-      "checksum": "33C31BF5FEBA292B59B8DABE5547CB52AB565521EE5619B52EB4BD4BF226CEA3",
+      "id": "github_release/github.com/derailed/k9s/v0.32.7/k9s_Linux_amd64.tar.gz",
+      "checksum": "03934727BFBF39B1E61A74D8E045796CDA2DE14F8CE4C01DF27F43D4494021DE",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/direnv/direnv/v2.34.0/direnv.linux-amd64",
-      "checksum": "F7F2C814C2EAE48641E4BDE9BF11F463E309C8F7E3737F96C78588150E1DCE25",
+      "id": "github_release/github.com/direnv/direnv/v2.35.0/direnv.linux-amd64",
+      "checksum": "55C294F4376397C68B1F659F049FB104DC2ECD0FCB15A15949D7F748E3F70B66",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/eksctl-io/eksctl/v0.191.0/eksctl_Linux_amd64.tar.gz",
-      "checksum": "0AA06745F4CEF66B39E340F23A44D0C4B886DF770552BA4B4E3ECEDA89B086E5",
+      "id": "github_release/github.com/eksctl-io/eksctl/v0.204.0/eksctl_Linux_amd64.tar.gz",
+      "checksum": "2AE2D581115D3658E38C104A851A85D1972B8F535E011A3AA5AF6EB96D4E142F",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/gruntwork-io/terragrunt/v0.67.15/terragrunt_linux_amd64",
-      "checksum": "461F7ED6C12CBC954A10D21BE745C96EDF551178270BA6CEE89E7A4B53521756",
+      "id": "github_release/github.com/gruntwork-io/terragrunt/v0.73.2/terragrunt_linux_amd64",
+      "checksum": "61D2D593797209DA1755FF15024D37CAB1C29A072C1DEF6ECF14D5E5DD2598BA",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/junegunn/fzf/v0.55.0/fzf-0.55.0-linux_amd64.tar.gz",
-      "checksum": "4DF2393776942780DDAB2CEA713DDAAC06CD5C3886CD23BC9119A6D3AA1E02BD",
+      "id": "github_release/github.com/junegunn/fzf/v0.60.0/fzf-0.60.0-linux_amd64.tar.gz",
+      "checksum": "C7AF0376077054767ED88637F72CAB78C563E2B44C4E0101EBFD84FFFDBCD339",
       "algorithm": "sha256"
     },
     {
@@ -36,43 +36,43 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/mikefarah/yq/v4.44.3/yq_linux_amd64",
-      "checksum": "A2C097180DD884A8D50C956EE16A9CEC070F30A7947CF4EBF87D5F36213E9ED7",
+      "id": "github_release/github.com/mikefarah/yq/v4.45.1/yq_linux_amd64",
+      "checksum": "654D2943CA1D3BE2024089EB4F270F4070F491A0610481D128509B2834870049",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/vmware-tanzu/velero/v1.14.1/velero-v1.14.1-linux-amd64.tar.gz",
-      "checksum": "1E123F9DEB9479F1CD41BA53B799D73B962CD6FF16ACEBFCA233725638C73DB2",
+      "id": "github_release/github.com/vmware-tanzu/velero/v1.15.2/velero-v1.15.2-linux-amd64.tar.gz",
+      "checksum": "EB62D20FB86ECC6E50FEC5DE888B965E9C7A5E6862846B83F9B2515230D5604F",
       "algorithm": "sha256"
     },
     {
-      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.17.63.zip",
-      "checksum": "C522B373953885EACAD54EB5FDE5E2696AD9321D02D66B23144D9E91413F9E04",
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.24.4.zip",
+      "checksum": "853C051882F2BD714F3F640E20441C00CCD90D7E402AF438FD5DFFAD80C80379",
       "algorithm": "sha256"
     },
     {
-      "id": "http/dl.k8s.io/v1.31.1/bin/linux/amd64/kubectl",
-      "checksum": "57B514A7FACCE4EE62C93B8DC21FDA8CF62EF3FED22E44FFC9D167EAB843B2AE",
+      "id": "http/dl.k8s.io/v1.32.2/bin/linux/amd64/kubectl",
+      "checksum": "4F6A959DCC5B702135F8354CC7109B542A2933C46B808B248A214C1F69F817EA",
       "algorithm": "sha256"
     },
     {
-      "id": "http/get.helm.sh/helm-v3.16.1-linux-amd64.tar.gz",
-      "checksum": "E57E826410269D72BE3113333DBFAAC0D8DFDD1B0CC4E9CB08BDF97722731CA9",
+      "id": "http/get.helm.sh/helm-v3.17.1-linux-amd64.tar.gz",
+      "checksum": "3B66F3CD28409F29832B1B35B43D9922959A32D795003149707FEA84CBCD4469",
       "algorithm": "sha256"
     },
     {
-      "id": "http/releases.hashicorp.com/terraform/1.9.6/terraform_1.9.6_linux_amd64.zip",
-      "checksum": "F2C90FB1EFB2AD411519D1D3CCBAEE7489A60E3147F2206FDB824FB35FAC9C1C",
+      "id": "http/releases.hashicorp.com/terraform/1.10.5/terraform_1.10.5_linux_amd64.zip",
+      "checksum": "0566A24F5332098B15716EBC394BE503F4094ACBA5BA529BF5EB0698ED5E2A90",
       "algorithm": "sha256"
     },
     {
-      "id": "http/releases.hashicorp.com/vault/1.17.6/vault_1.17.6_linux_amd64.zip",
-      "checksum": "0CDDC1FBBB88583B5BA5B845F9F8FAE47C6FB39A6D48CD543C6BA6FD3AC1A669",
+      "id": "http/releases.hashicorp.com/vault/1.18.4/vault_1.18.4_linux_amd64.zip",
+      "checksum": "BDDE42660C14700E4D5275760D50C59ED637803CD9C7C12926A2E2E788097A45",
       "algorithm": "sha256"
     },
     {
-      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.228.0/registry.yaml",
-      "checksum": "B596A15D104C9B5A07E0E209FA1DC44691F0349593E0EA638EC7F78D831E956A40B92ABC861FEAB837A6A214AD24FF0AF54A183B9FB52CCFBA024057DD6CDC72",
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.313.0/registry.yaml",
+      "checksum": "D43E1EE9512F655E0B93327B72E1B3F74B8F0E07666525B7625A4A81E89E0DF32640DBEA060B7882699B6ED988788E22F76D0296B342BF9A38078DECB1328540",
       "algorithm": "sha512"
     }
   ]

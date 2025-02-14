@@ -1,5 +1,5 @@
 # --[ Global variables
-ARG OPENSSL_VERSION=3.4.0
+ARG OPENSSL_VERSION=3.4.1
 ARG SSL_PREFIX="/usr/local/ssl-${OPENSSL_VERSION}"
 ARG DEFAULT_BASE="debian:testing-slim"
 
@@ -125,9 +125,11 @@ RUN set -eux; \
     ca-certificates \
     coreutils \
     curl \
+    iproute2 \
     jq \
     gzip \
     git \
+    mandoc \
     moreutils \
     nala \
     nodejs \
@@ -196,7 +198,7 @@ RUN set -eux; \
 
 # hishtory
 RUN set -eux; \
-  curl ${CURL_OPTS} --remote-name "https://github.com/ddworken/hishtory/releases/download/v0.311/hishtory-linux-amd64" && \
+  curl ${CURL_OPTS} --remote-name "https://github.com/ddworken/hishtory/releases/download/v0.335/hishtory-linux-amd64" && \
   chmod +x hishtory-linux-amd64 && \
   ./hishtory-linux-amd64 install && \
   ./hishtory-linux-amd64 update && \

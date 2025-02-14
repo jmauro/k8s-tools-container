@@ -8,47 +8,47 @@ checksum:
     - linux/amd64
 registries:
   - type: standard
-    ref: v4.228.0 # renovate: depName=aquaproj/aqua-registry
+    ref: v4.313.0 # renovate: depName=aquaproj/aqua-registry
 packages:
-  - name: kubernetes/kubectl@v1.31.1
+  - name: kubernetes/kubectl@v1.32.2
     description: The kubectl command line tool lets you control Kubernetes clusters
     link: https://kubernetes.io/docs/reference/kubectl/
-  - name: mikefarah/yq@v4.44.3
+  - name: mikefarah/yq@v4.45.1
     description: yq is a portable command-line YAML processor
     link: https://github.com/mikefarah/yq
-  - name: helm/helm@v3.16.1
+  - name: helm/helm@v3.17.1
     description: The Kubernetes Package Manager
     link: https://github.com/helm/helm
-  - name: hashicorp/vault@v1.17.6
+  - name: hashicorp/vault@v1.18.4
     description: A tool for secrets management, encryption as a service, and privileged access management
     link: https://github.com/hashicorp/vault
-  - name: derailed/k9s@v0.32.5
+  - name: derailed/k9s@v0.32.7
     description: Kubernetes CLI To Manage Your Clusters In Style
     link: https://github.com/derailed/k9s
-  - name: weaveworks/eksctl@v0.191.0
+  - name: weaveworks/eksctl@v0.204.0
     description: The official CLI for Amazon EKS
     link: https://github.com/weaveworks/eksctl
-  - name: junegunn/fzf@v0.55.0
+  - name: junegunn/fzf@v0.60.0
     description: A command-line fuzzy finder
     link: https://github.com/junegunn/fzf
-  - name: vmware-tanzu/velero@v1.14.1
+  - name: vmware-tanzu/velero@v1.15.2
     description: Backup and migrate Kubernetes applications and their persistent volumes
     link: https://github.com/vmware-tanzu/velero
   - name: kubernetes-sigs/krew@v0.4.4
     description: Find and install kubectl plugins
     link: https://github.com/kubernetes-sigs/krew
-  - name: aws/aws-cli@2.17.63
+  - name: aws/aws-cli@2.24.4
     description: The AWS Command Line Interface (AWS CLI) is a unified tool that provides a consistent interface for interacting with all parts of Amazon Web Services
     link: https://github.com/aws/aws-cli
-  - name: direnv/direnv@v2.34.0
+  - name: direnv/direnv@v2.35.0
     description: unclutter your .profile
     link: https://github.com/direnv/direnv
-  - name: hashicorp/terraform@v1.9.6
+  - name: hashicorp/terraform@v1.10.5
     description: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is an open source tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned
     link: https://github.com/hashicorp/terraform
-  - name: gruntwork-io/terragrunt@v0.67.15
+  - name: gruntwork-io/terragrunt@v0.73.2
     description: Terragrunt is a thin wrapper for Terraform that provides extra tools for working with multiple Terraform modules
     link: https://github.com/gruntwork-io/terragrunt
-  - name: argoproj/argo-cd@v2.12.4
+  - name: argoproj/argo-cd@v2.14.2
     description: Declarative continuous deployment for Kubernetes
     link: https://github.com/argoproj/argo-cd
